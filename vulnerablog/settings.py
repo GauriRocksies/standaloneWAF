@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'waf',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,83 @@ MESSAGE_TAGS = {
 
 #email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# =========================================================
+# WAF Logging Configuration (Member 3 module)
+# =========================================================
+# Physical log files live outside the DB (attacks.log / waf.log /
+# access.log) so raw request data is still recoverable even if the
+# database write in attack_logger.py fails or the DB is unavailable.
+
+LOGS_DIR = BASE_DIR / 'logs'
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'waf_verbose': {
+            # General WAF component logs (errors, warnings, debug info)
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+        'attack_line': {
+            # One line per detected attack, kept parseable/grep-friendly
+            'format': '[{asctime}] {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'waf_file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'waf.log',
+            'maxBytes': 5 * 1024 * 1024,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'waf_verbose',
+        },
+        'attack_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'attacks.log',
+            'maxBytes': 5 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'attack_line',
+        },
+        'access_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOGS_DIR / 'access.log',
+            'maxBytes': 5 * 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'waf_verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'waf_verbose',
+        },
+    },
+
+    'loggers': {
+        # General WAF component logging: waf.logging.logger.get_logger(__name__)
+        'waf': {
+            'handlers': ['waf_file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Dedicated attack channel: waf.logging.attack_logger.log_attack(...)
+        'waf.attacks': {
+            'handlers': ['attack_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Every incoming request, written by middleware (teammate's module)
+        'waf.access': {
+            'handlers': ['access_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
