@@ -138,13 +138,11 @@ LOGGING = {
     'formatters': {
         'waf_verbose': {
             # General WAF component logs (errors, warnings, debug info)
-            'format': '[{asctime}] {levelname} {name}: {message}',
-            'style': '{',
+            '()': 'waf.logging.formatter.WafTextFormatter',
         },
         'attack_line': {
-            # One line per detected attack, kept parseable/grep-friendly
-            'format': '[{asctime}] {message}',
-            'style': '{',
+            # One JSON object per line, machine-parseable attack record
+            '()': 'waf.logging.formatter.AttackJSONFormatter',
         },
     },
 
