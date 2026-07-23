@@ -26,16 +26,15 @@
         <img src="{{ post.cover_image.url }}" class="cover-img" />
       </div>
     </div>
-    {% endif %}
-
-
-    {% comment %} <!-- DEBUG - Add this temporarily to see what's happening -->
-<div style="border:2px solid red; padding:10px; margin:10px;">
-    <h3>DEBUG: Raw content</h3>
-    <pre>{{ post.content }}</pre>
-    <h3>DEBUG: With safe filter</h3>
-    {{ post.content|safe }}
-</div> {% endcomment %}
+    {% endif %} {% comment %}
+    <!-- DEBUG - Add this temporarily to see what's happening -->
+    <div style="border: 2px solid red; padding: 10px; margin: 10px">
+      <h3>DEBUG: Raw content</h3>
+      <pre>{{ post.content }}</pre>
+      <h3>DEBUG: With safe filter</h3>
+      {{ post.content|safe }}
+    </div>
+    {% endcomment %}
 
     <!-- BODY -->
     <div class="article-body">{{ post.content|safe }}</div>
@@ -88,7 +87,6 @@
                   >
                 </button>
 
-                
                 <button
                   class="comment-reply-btn"
                   data-comment-id="{{ comment.pk }}"
@@ -155,7 +153,7 @@
                     >
                   </div>
 
-                  <p class="comment-text">{{ reply.content }}</p>
+                  <p class="comment-text">{{ reply.content | safe }}</p>
                 </div>
               </div>
             </div>
