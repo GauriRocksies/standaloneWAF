@@ -1,0 +1,94 @@
+{% extends "waf/base.html" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Statistics</h1>
+    <p>Severity breakdown and full leaderboards across all logged attacks.</p>
+</div>
+
+<div class="panel">
+    <h2>Attacks by Severity</h2>
+    <canvas id="severityChart"></canvas>
+</div>
+
+<div class="chart-grid">
+    <div class="panel">
+        <h2>Top Attacker IPs</h2>
+        {% if top_ips %}
+        <table>
+            <thead><tr><th>IP Address</th><th>Attacks</th></tr></thead>
+            <tbody>
+                {% for row in top_ips %}
+                <tr><td class="mono">{{ row.ip_address }}</td><td class="mono">{{ row.count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="empty-state">No data yet.</div>{% endif %}
+    </div>
+
+    <div class="panel">
+        <h2>Top Attack Types</h2>
+        {% if top_types %}
+        <table>
+            <thead><tr><th>Attack Type</th><th>Count</th></tr></thead>
+            <tbody>
+                {% for row in top_types %}
+                <tr><td>{{ row.attack_type }}</td><td class="mono">{{ row.count }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="empty-state">No data yet.</div>{% endif %}
+    </div>
+
+    <div class="panel">
+        <h2>Top Triggered Rules</h2>
+        {% if top_rules %}
+        <table>
+            <thead><tr><th>Rule</th><th>Triggers</th><th>Last Triggered</th></tr></thead>
+            <tbody>
+                {% for row in top_rules %}
+                <tr>
+                    <td class="mono">{{ row.rule_name }}</td>
+                    <td class="mono">{{ row.trigger_count }}</td>
+                    <td class="mono">{{ row.last_triggered|date:"M d, H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="empty-state">No data yet.</div>{% endif %}
+    </div>
+
+    <div class="panel">
+        <h2>Top Detectors</h2>
+        {% if top_detectors %}
+        <table>
+            <thead><tr><th>Detector</th><th>Detections</th><th>False Positives</th></tr></thead>
+            <tbody>
+                {% for row in top_detectors %}
+                <tr>
+                    <td class="mono">{{ row.detector_name }}</td>
+                    <td class="mono">{{ row.detection_count }}</td>
+                    <td class="mono">{{ row.false_positive_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="empty-state">No data yet.</div>{% endif %}
+    </div>
+</div>
+
+{{ severity_chart|json_script:"severity-chart-data" }}
+<script>
+    Chart.defaults.color = '#8ba3c0';
+    Chart.defaults.borderColor = '#1e2d47';
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+    const severityConfig = JSON.parse(document.getElementById('severity-chart-data').textContent);
+    severityConfig.options = severityConfig.options || {};
+    severityConfig.options.responsive = true;
+    severityConfig.options.maintainAspectRatio = false;
+    new Chart(document.getElementById('severityChart').getContext('2d'), severityConfig);
+</script>
+{% endblock %}
