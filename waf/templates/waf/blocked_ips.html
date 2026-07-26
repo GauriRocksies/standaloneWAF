@@ -1,0 +1,49 @@
+{% extends "waf/base.html" %}
+
+{% block title %}Blocked IPs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Blocked IPs</h1>
+    <p>{{ active_count }} IP address{{ active_count|pluralize:"es" }} currently under an active block.</p>
+</div>
+
+<div class="panel">
+    {% if blocked_ips %}
+    <table>
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Reason</th>
+                <th>Blocked At</th>
+                <th>Expires</th>
+                <th>Attacks</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ip in blocked_ips %}
+            <tr>
+                <td class="mono">{{ ip.ip_address }}</td>
+                <td>{{ ip.reason|default:"—" }}</td>
+                <td class="mono">{{ ip.blocked_at|date:"M d, Y H:i" }}</td>
+                <td class="mono">
+                    {% if ip.expires_at %}{{ ip.expires_at|date:"M d, Y H:i" }}{% else %}Permanent{% endif %}
+                </td>
+                <td class="mono">{{ ip.attack_count }}</td>
+                <td>
+                    {% if ip.is_active and not ip.is_expired %}
+                        <span class="badge badge-blocked">Active</span>
+                    {% else %}
+                        <span class="badge badge-allowed">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">No IPs have been blocked yet.</div>
+    {% endif %}
+</div>
+{% endblock %}
