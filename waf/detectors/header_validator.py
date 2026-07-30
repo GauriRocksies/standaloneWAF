@@ -30,8 +30,15 @@ MAX_XFF_HOPS = 10
 _PAYLOAD_ATTACK_TYPES = ("sql_injection", "xss", "command_injection", "path_traversal")
 
 _INSPECTED_HEADERS = (
-    "Host", "Referer", "Origin", "X-Forwarded-For", "Forwarded",
-    "Content-Type", "Content-Length", "Accept", "User-Agent",
+    "Host",
+    "Referer",
+    "Origin",
+    "X-Forwarded-For",
+    "Forwarded",
+    "Content-Type",
+    "Content-Length",
+    "Accept",
+    "User-Agent",
 )
 
 
@@ -106,17 +113,49 @@ def _check_forwarded_chain(name: str, value: str):
 
 
 def _check_payload(name: str, value: str):
-    for attack_type in _PAYLOAD_ATTACK_TYPES:
+    header = name.lower()
+
+    # Browser-generated protocol headers frequently contain punctuation,
+    # MIME types and boundaries that resemble attack signatures.
+    # Skip payload inspection for Accept entirely.
+    if header == "accept":
+        return None
+
+    attack_types = _PAYLOAD_ATTACK_TYPES
+
+    # User-Agent and Content-Type should not be checked for command
+    # injection because normal browser values contain semicolons.
+    if header in ("user-agent", "content-type"):
+        attack_types = (
+            "sql_injection",
+            "xss",
+            "path_traversal",
+        )
+
+    for attack_type in attack_types:
         hits = match_all(value, attack_type)
-        if hits:
-            best = max(hits, key=lambda r: r.score)
-            logger.info("payload signature found inside header '%s': %s", name, best.rule_id)
-            return build_result(
-                attack=attack_type,
-                score=best.score,
-                severity=best.severity,
-                reason=f"{best.description} found in header '{name}'",
-                rule=best.rule_id,
-                detector=DETECTOR_NAME,
-            )
+        if not hits:
+            continue
+
+        best = max(hits, key=lambda r: r.score)
+
+        # Ignore isolated weak matches.
+        if best.score < 40:
+            continue
+
+        logger.info(
+            "payload signature found inside header '%s': %s",
+            name,
+            best.rule_id,
+        )
+
+        return build_result(
+            attack=attack_type,
+            score=best.score,
+            severity=best.severity,
+            reason=f"{best.description} found in header '{name}'",
+            rule=best.rule_id,
+            detector=DETECTOR_NAME,
+        )
+
     return None

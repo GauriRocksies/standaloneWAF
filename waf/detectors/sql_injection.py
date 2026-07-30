@@ -37,6 +37,10 @@ ATTACK_TYPE = "sql_injection"
 MULTI_SIGNAL_THRESHOLD = 3
 MULTI_SIGNAL_BONUS = 10
 
+# Ignore isolated low-confidence detections.
+# Legitimate requests should not be flagged because of one weak pattern.
+MIN_SQLI_SCORE = 40
+
 
 @safe_detect
 def detect(request):
@@ -59,12 +63,26 @@ def detect(request):
     score = best.score
     reason = best.description
 
+    # -------------------------------------------------------
+    # Ignore isolated weak indicators to reduce false positives.
+    # Keep stronger or corroborated detections.
+    # -------------------------------------------------------
+    if score < MIN_SQLI_SCORE and len(matched) < MULTI_SIGNAL_THRESHOLD:
+        logger.debug(
+            "Ignoring weak SQLi indicator on %s (score=%d, rules=%s)",
+            request.path,
+            score,
+            sorted(matched),
+        )
+        return None
+
     if len(matched) >= MULTI_SIGNAL_THRESHOLD:
         score = min(100, score + MULTI_SIGNAL_BONUS)
         reason = f"{reason}; corroborated by {len(matched)} SQLi indicators total"
         logger.info(
             "multiple SQLi indicators co-occurred on %s: %s",
-            request.path, sorted(matched),
+            request.path,
+            sorted(matched),
         )
 
     result = build_result(
@@ -75,5 +93,7 @@ def detect(request):
         rule=best.rule_id,
         detector=DETECTOR_NAME,
     )
+
     report(request, result, payload={"matched_rules": sorted(matched)})
+
     return result

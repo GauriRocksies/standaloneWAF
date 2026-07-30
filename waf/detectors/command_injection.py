@@ -30,7 +30,10 @@ DETECTOR_NAME = "command_detector"
 ATTACK_TYPE = "command_injection"
 
 MULTI_SIGNAL_THRESHOLD = 2
-MULTI_SIGNAL_BONUS = 15  # metacharacter + command name together is a strong tell
+MULTI_SIGNAL_BONUS = 15
+
+# Ignore isolated weak indicators (e.g. a single ';' in normal text)
+MIN_COMMAND_SCORE = 50
 
 
 @safe_detect
@@ -54,12 +57,25 @@ def detect(request):
     score = best.score
     reason = best.description
 
+    # Ignore isolated weak matches.
+    if score < MIN_COMMAND_SCORE and len(matched) < MULTI_SIGNAL_THRESHOLD:
+        logger.debug(
+            "Ignoring weak command injection indicator on %s (score=%d, rules=%s)",
+            request.path,
+            score,
+            sorted(matched),
+        )
+        return None
+
     if len(matched) >= MULTI_SIGNAL_THRESHOLD:
         score = min(100, score + MULTI_SIGNAL_BONUS)
-        reason = f"{reason}; metacharacter + command name both present"
+        reason = (
+            f"{reason}; metacharacter + command name both present"
+        )
         logger.info(
             "multiple command injection indicators co-occurred on %s: %s",
-            request.path, sorted(matched),
+            request.path,
+            sorted(matched),
         )
 
     result = build_result(
@@ -70,5 +86,7 @@ def detect(request):
         rule=best.rule_id,
         detector=DETECTOR_NAME,
     )
+
     report(request, result, payload={"matched_rules": sorted(matched)})
+
     return result
