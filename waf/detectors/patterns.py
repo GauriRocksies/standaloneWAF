@@ -68,7 +68,7 @@ _severity_for = severity_for_score
 _RAW_RULES: List[Tuple[str, str, str, int, str]] = [
     # ---- SQL injection ------------------------------------------------
     (r"union\s+select", "SQLI-001", "sql_injection", 80, "UNION-based injection"),
-    (r"select\s+\*\s+from", "SQLI-002", "sql_injection", 30, "generic SELECT (weak alone)"),
+    (r"select\s+\*\s+from", "SQLI-002", "sql_injection", 20, "generic SELECT (weak alone)"),
     (r"drop\s+table", "SQLI-003", "sql_injection", 95, "destructive DDL"),
     (r"insert\s+into", "SQLI-004", "sql_injection", 50, "INSERT statement"),
     (r"update\s+\w+\s+set", "SQLI-005", "sql_injection", 50, "UPDATE statement"),
@@ -85,7 +85,7 @@ _RAW_RULES: List[Tuple[str, str, str, int, str]] = [
     (r"concat\s*\(", "SQLI-016", "sql_injection", 20, "string concat (weak alone)"),
     (r"char\s*\(\s*\d+", "SQLI-017", "sql_injection", 20, "char()-encoded literal (weak alone)"),
     (r"0x[0-9a-f]{4,}", "SQLI-018", "sql_injection", 25, "hex-encoded literal (weak alone)"),
-    (r"(--|#|/\*)", "SQLI-019", "sql_injection", 15, "SQL comment marker (weak alone)"),
+    (r"(--|#|/\*)", "SQLI-019", "sql_injection", 20, "SQL comment marker (weak alone)"),
     (r"pg_sleep\s*\(", "SQLI-020", "sql_injection", 65, "PostgreSQL time-based blind"),
     (r"sqlite_master", "SQLI-021", "sql_injection", 60, "SQLite schema table"),
     (r"waitfor\s+delay", "SQLI-022", "sql_injection", 65, "MSSQL time-based blind"),
@@ -100,8 +100,8 @@ _RAW_RULES: List[Tuple[str, str, str, int, str]] = [
     (r"document\.cookie", "XSS-006", "xss", 80, "cookie theft attempt"),
     (r"(alert|prompt|confirm)\s*\(", "XSS-007", "xss", 50, "JS dialog call (common PoC)"),
     (r"eval\s*\(", "XSS-008", "xss", 60, "eval() call"),
-    (r"fetch\s*\(", "XSS-009", "xss", 25, "fetch() call (weak alone)"),
-    (r"location\.href", "XSS-010", "xss", 35, "location redirect (weak alone)"),
+    (r"fetch\s*\(", "XSS-009", "xss", 15, "fetch() call (weak alone)"),
+    (r"location\.href", "XSS-010", "xss", 20, "location redirect (weak alone)"),
     (r"innerHTML", "XSS-011", "xss", 40, "DOM sink assignment"),
     (r"srcdoc\s*=", "XSS-012", "xss", 55, "iframe srcdoc injection"),
 
@@ -117,7 +117,13 @@ _RAW_RULES: List[Tuple[str, str, str, int, str]] = [
     (r"etc[/\\]hosts", "PATH-009", "path_traversal", 55, "hosts file"),
 
     # ---- Command injection -------------------------------------------
-    (r"[;&|`]|\$\(", "CMD-001", "command_injection", 40, "shell metacharacter (weak alone)"),
+    (
+    r"(?:&&|\|\||;\s*(?:cat|ls|dir|whoami|id|pwd|bash|sh|cmd|powershell|curl|wget|nc)\b|`[^`]+`|\$\([^)]+\))",
+    "CMD-001",
+    "command_injection",
+    60,
+    "shell metacharacter with command",
+),
     (r"cmd\.exe", "CMD-002", "command_injection", 85, "Windows command shell"),
     (r"powershell", "CMD-003", "command_injection", 75, "PowerShell invocation"),
     (r"\bbash\b|\bsh\s+-c\b", "CMD-004", "command_injection", 45, "shell invocation"),

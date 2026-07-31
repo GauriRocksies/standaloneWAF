@@ -30,7 +30,8 @@ DETECTOR_NAME = "cookie_validator"
 
 MAX_COOKIE_LENGTH = 4096  # RFC 6265 practical per-cookie limit
 SUSPICIOUS_NAME_RE = re.compile(
-    r"admin|debug|eval|role|is_?auth|bypass|superuser|impersonate", re.IGNORECASE
+    r"\b(admin|debug|eval|role|is_?auth|bypass|superuser|impersonate)\b",
+    re.IGNORECASE,
 )
 INVALID_CHARS_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")  # control chars minus \t\n\r
 

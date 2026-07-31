@@ -17,6 +17,8 @@ Detects:
     isn't configured, rather than crashing the request.
 """
 
+import time
+
 from django.core.cache import cache
 
 from waf.detectors.base_detector import build_result, report, safe_detect
@@ -75,17 +77,30 @@ def _check_automation_headers(request):
 
 
 def _check_rapid_requests(request):
-    """Heuristic only: counts requests per IP in a sliding window via
-    the cache. Not a substitute for real rate limiting — just a soft
-    signal that gets logged, never blocks, in this log-only pipeline."""
+    """Heuristic only: counts requests per IP in a fixed time window
+    via the cache. Not a substitute for real rate limiting — just a
+    soft signal that gets logged, never blocks, in this log-only
+    pipeline.
+
+    Uses a time-bucketed cache key (current time // window size)
+    rather than refreshing a single key's TTL on every hit. The old
+    approach never actually reset under sustained traffic — any IP
+    that never went RAPID_REQUEST_WINDOW_SECONDS without a request
+    (a normal active browsing session, AJAX polling, etc.) would see
+    its count climb forever instead of measuring "requests in the
+    last N seconds" as intended.
+    """
     ip = request.META.get("REMOTE_ADDR")
     if not ip:
         return None
 
-    key = f"{_CACHE_KEY_PREFIX}{ip}"
+    bucket = int(time.time() // RAPID_REQUEST_WINDOW_SECONDS)
+    key = f"{_CACHE_KEY_PREFIX}{ip}:{bucket}"
     try:
         count = cache.get(key, 0) + 1
-        cache.set(key, count, timeout=RAPID_REQUEST_WINDOW_SECONDS)
+        # Window expires shortly after the bucket ends; no need to
+        # keep refreshing it, since a new bucket/key is used each window.
+        cache.set(key, count, timeout=RAPID_REQUEST_WINDOW_SECONDS * 2)
     except Exception:
         logger.warning("cache backend unavailable, skipping rapid-request heuristic")
         return None

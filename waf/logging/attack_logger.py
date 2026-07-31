@@ -101,15 +101,24 @@ def log_attack(event: dict) -> Optional[AttackLog]:
     except Exception as exc:
         _error_logger.error(f'Failed to update rule/detector stats: {exc}', exc_info=True)
 
-    # Auto-block the IP if this attack was blocked and the caller
-    # didn't already handle blocking upstream (pass auto_block=False
-    # if the decision engine wants to manage blocking itself).
+    # Auto-block only after multiple blocked attacks from the same IP.
+    AUTO_BLOCK_THRESHOLD = 3
+
     if attack.blocked and event.get('auto_block', True):
         try:
-            BlockedIP.block(
-                attack.ip_address,
-                reason=f'{attack.attack_type} via rule {attack.rule_triggered or "unknown"}',
-            )
+            blocked_count = AttackLog.objects.filter(
+                 ip_address=attack.ip_address,
+                blocked=True,
+             ).count()
+
+            if blocked_count >= AUTO_BLOCK_THRESHOLD:
+             BlockedIP.block(
+                 attack.ip_address,
+                 reason=(
+                       f'{blocked_count} blocked attacks '
+                      f'(latest: {attack.attack_type} via rule {attack.rule_triggered or "unknown"})'
+                    ),
+             )
         except Exception as exc:
             _error_logger.error(f'Failed to update BlockedIP: {exc}', exc_info=True)
 
