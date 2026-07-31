@@ -13,7 +13,7 @@ import logging
 from django.http import HttpResponseForbidden
 
 from waf.engine import WAFEngine
-from waf.models import BlockedIP, AttackLog
+from waf.models import BlockedIP
 from waf.constants import BLOCK, BLOCK_MESSAGE
 from waf.logging.attack_logger import log_access
 
@@ -23,6 +23,12 @@ logger = logging.getLogger(__name__)
 class WAFMiddleware:
     """
     Main request interception middleware.
+
+    AttackLog rows are now written inside WAFEngine.inspect() itself,
+    once per detection, after the decision engine has made its final
+    call — so this middleware no longer needs to go find and patch a
+    row after the fact. It only needs to check the blocklist, run
+    inspection, and respond.
     """
 
     def __init__(self, get_response):
@@ -43,23 +49,6 @@ class WAFMiddleware:
                 "Blocked request from blacklisted IP %s",
                 ip
             )
-
-            # Update latest attack log if one exists
-            latest = (
-                AttackLog.objects
-                .filter(
-                    ip_address=ip,
-                    url=request.path,
-                    blocked=False,
-                )
-                .order_by("-timestamp")
-                .first()
-            )
-
-            if latest:
-                latest.blocked = True
-                latest.response_code = 403
-                latest.save(update_fields=["blocked", "response_code"])
 
             log_access(
                 ip_address=ip,
@@ -83,23 +72,6 @@ class WAFMiddleware:
                 ip,
                 decision.risk_score,
             )
-
-            # Update the attack log created by the detector
-            latest = (
-                AttackLog.objects
-                .filter(
-                    ip_address=ip,
-                    url=request.path,
-                    blocked=False,
-                )
-                .order_by("-timestamp")
-                .first()
-            )
-
-            if latest:
-                latest.blocked = True
-                latest.response_code = 403
-                latest.save(update_fields=["blocked", "response_code"])
 
             log_access(
                 ip_address=ip,

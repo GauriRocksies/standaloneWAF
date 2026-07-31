@@ -36,7 +36,6 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import unquote
 
 from waf.detectors.patterns import REGISTRY, Rule
-from waf.logging.attack_logger import log_attack
 from waf.logging.logger import get_logger
 
 logger = get_logger(__name__)
@@ -281,35 +280,39 @@ def result_from_rule(rule: Rule, detector: str) -> Dict[str, Any]:
 
 def report(request, result: Dict[str, Any], payload: Any = None) -> None:
     """
-    Send a detection result to Member 3's log_attack(). Always sends
-    blocked=False — this pipeline is detect-and-log only; blocking is
-    a decision-engine concern, not a detector concern.
+    Attach the detection payload to the result and emit a debug-level
+    log line. This does NOT write an AttackLog row.
 
-    Never raises: log_attack() already guarantees this, but detectors
-    call report() from inside request-handling code, so a defensive
-    try/except stays here too.
+    Detection happens before the decision engine has aggregated every
+    detector's output, so no individual detector actually knows yet
+    whether the *request* will end up blocked or allowed — only the
+    engine does, once every detector has run. Writing the AttackLog
+    row here (as this used to do, always with blocked=False) produced
+    one row per detector per request and left the middleware to guess
+    which single row to patch after the fact, which was both lossy
+    (only one row ever got marked blocked=True) and the reason
+    BlockedIP never actually got populated (log_attack() only
+    auto-blocks when blocked=True, and this always sent False).
+
+    Instead, waf.engine.WAFEngine.inspect() collects every detector's
+    result dict (payload included, via the "_payload" key stashed
+    here) and calls log_attack() itself, once per detection, AFTER
+    the decision engine has run — so every row for a given request
+    gets the correct final blocked/response_code, and BlockedIP.block()
+    fires correctly through log_attack()'s existing auto-block path.
+
+    Never raises: detectors call report() from inside request-handling
+    code, so this stays defensive even though it's now just building a
+    dict and logging.
     """
     try:
-        log_attack({
-            "ip_address": request.META.get("REMOTE_ADDR"),
-            "url": request.path,
-            "method": request.method,
-            "attack_type": result["attack"],
-            "payload": payload,
-            "headers": get_headers(request),
-            "severity": result["severity"],
-            "risk_score": result["score"],
-            "rule_triggered": result["rule"],
-            "detector_name": result["detector"],
-            "user_agent": request.META.get("HTTP_USER_AGENT", ""),
-            "blocked": False,
-        })
+        result["_payload"] = payload
         logger.info(
-            "detection reported: rule=%s detector=%s score=%d",
+            "detection found (pending final decision): rule=%s detector=%s score=%d",
             result["rule"], result["detector"], result["score"],
         )
     except Exception:
-        logger.exception("failed to report detection via log_attack")
+        logger.exception("failed to record detection payload")
 
 
 def safe_detect(func):

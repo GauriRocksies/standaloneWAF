@@ -35,6 +35,13 @@ MULTI_SIGNAL_BONUS = 15
 # Ignore isolated weak indicators (e.g. a single ';' in normal text)
 MIN_COMMAND_SCORE = 50
 
+# The multi-signal bonus is only meaningful when the shell-metacharacter
+# rule is one of the corroborating matches — e.g. ";whoami" or "`ls`".
+# Two weak command-name-only matches with no metacharacter (e.g. the
+# words "cat" and "ping" both appearing in an ordinary sentence) are
+# not evidence of injection and must not be bumped into a detection.
+METACHARACTER_RULE_ID = "CMD-001"
+
 
 @safe_detect
 def detect(request):
@@ -57,8 +64,16 @@ def detect(request):
     score = best.score
     reason = best.description
 
-    # Ignore isolated weak matches.
-    if score < MIN_COMMAND_SCORE and len(matched) < MULTI_SIGNAL_THRESHOLD:
+    has_metacharacter_signal = METACHARACTER_RULE_ID in matched
+    corroborated = (
+        len(matched) >= MULTI_SIGNAL_THRESHOLD and has_metacharacter_signal
+    )
+
+    # Ignore isolated weak matches, and ignore multiple weak matches
+    # that never include an actual shell metacharacter — two bare
+    # command-name words (e.g. "cat" + "ping") in ordinary text are
+    # not corroborating evidence of injection.
+    if score < MIN_COMMAND_SCORE and not corroborated:
         logger.debug(
             "Ignoring weak command injection indicator on %s (score=%d, rules=%s)",
             request.path,
@@ -67,7 +82,7 @@ def detect(request):
         )
         return None
 
-    if len(matched) >= MULTI_SIGNAL_THRESHOLD:
+    if corroborated:
         score = min(100, score + MULTI_SIGNAL_BONUS)
         reason = (
             f"{reason}; metacharacter + command name both present"
