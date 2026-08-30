@@ -67,22 +67,55 @@ class BlockedIP(models.Model):
         ).exists()
 
     @classmethod
-    def block(cls, ip_address: str, reason: str = '', expires_at=None) -> 'BlockedIP':
+    def block(
+        cls,
+        ip_address: str,
+        reason: str = '',
+        expires_at=None,
+        attack_count: int | None = None,
+    ) -> 'BlockedIP':
         """
-        Create a new block record, or reactivate/refresh an existing one
-        for the same IP and bump its attack_count.
+        Create a new block record, or reactivate/refresh an existing one.
+
+        For a new block, attack_count can be supplied when the caller
+        already knows how many attacks caused the block. This prevents
+        the initial record from incorrectly reporting only 1 attack.
+
+        For an existing block, attack_count is incremented by one unless
+        an explicit count is supplied.
         """
+        if attack_count is not None and attack_count < 1:
+            raise ValueError('attack_count must be at least 1')
+
         obj, created = cls.objects.get_or_create(
             ip_address=ip_address,
-            defaults={'reason': reason, 'expires_at': expires_at},
+            defaults={
+                'reason': reason,
+                'expires_at': expires_at,
+                'attack_count': attack_count if attack_count is not None else 1,
+            },
         )
+
         if not created:
             obj.is_active = True
             obj.reason = reason or obj.reason
             obj.expires_at = expires_at
-            obj.attack_count = F('attack_count') + 1
-            obj.save(update_fields=['is_active', 'reason', 'expires_at', 'attack_count'])
+
+            if attack_count is None:
+                obj.attack_count = F('attack_count') + 1
+            else:
+                obj.attack_count = attack_count
+
+            obj.save(
+                update_fields=[
+                    'is_active',
+                    'reason',
+                    'expires_at',
+                    'attack_count',
+                ]
+            )
             obj.refresh_from_db()
+
         return obj
 
     def __str__(self) -> str:
