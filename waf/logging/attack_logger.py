@@ -1,13 +1,13 @@
 """
 attack_logger.py
 
-The single public entry point the detection/decision engine (and
-middleware) call once an attack has been identified. This is the
-"seam" between their modules and mine: they hand over a plain dict,
-and everything downstream — DB write, log file, rule/detector
-counters, IP blocking — happens here.
+Django-specific persistence entry point for WAF detections.
 
-Usage (from middleware or the decision engine):
+The module itself can be imported without initializing Django.
+Django ORM/model imports are intentionally performed inside log_attack()
+so that the standalone WAF core remains independent of Django.
+
+Usage:
 
     from waf.logging.attack_logger import log_attack
 
@@ -27,43 +27,56 @@ Usage (from middleware or the decision engine):
         'response_code': 403,
     })
 
-Only ip_address, url, method, and attack_type are required. Everything
-else has a safe default. This function never raises — a failure to
-log must never take down the request/response cycle it's protecting.
+Only ip_address, url, method, and attack_type are required.
+Everything else has a safe default.
+
+This function never raises a logging/database exception back into the
+request/response cycle it is protecting.
 """
+
+from __future__ import annotations
 
 from typing import Optional
 
-from django.utils import timezone
-
-from waf.models import AttackLog, BlockedIP, RuleStats, DetectorStats
 from waf.logging.logger import get_logger
+
 
 logger = get_logger('waf.attacks')
 _error_logger = get_logger('waf')
 
 REQUIRED_FIELDS = ('ip_address', 'url', 'method', 'attack_type')
+AUTO_BLOCK_THRESHOLD = 3
 
 
-def log_attack(event: dict) -> Optional[AttackLog]:
+def log_attack(event: dict) -> Optional[object]:
     """
-    Record a detected attack: writes to the database, the attacks.log
-    file, and updates rule/detector counters and IP block status.
+    Record a detected attack.
+
+    Django-specific imports happen inside this function deliberately.
+    This allows the module to be imported in a process where Django is
+    not installed or configured.
 
     Args:
-        event: dict describing the attack. See module docstring for
-            the expected shape.
+        event: Dictionary describing the detected attack.
 
     Returns:
-        The created AttackLog instance, or None if logging failed
-        (the failure itself is written to waf.log, not raised).
+        The created AttackLog instance, or None if validation/database
+        logging fails.
     """
-    missing = [f for f in REQUIRED_FIELDS if not event.get(f)]
+    missing = [field for field in REQUIRED_FIELDS if not event.get(field)]
+
     if missing:
-        _error_logger.error(f'log_attack called with missing required fields: {missing}')
+        _error_logger.error(
+            f'log_attack called with missing required fields: {missing}'
+        )
         return None
 
     try:
+        # Django is an integration dependency, not a module-import
+        # dependency. Keep these imports inside the Django operation.
+        from django.utils import timezone
+        from waf.models import AttackLog, BlockedIP, RuleStats, DetectorStats
+
         attack = AttackLog.objects.create(
             ip_address=event['ip_address'],
             url=event['url'],
@@ -84,75 +97,106 @@ def log_attack(event: dict) -> Optional[AttackLog]:
             latitude=event.get('latitude'),
             longitude=event.get('longitude'),
         )
+
     except Exception as exc:
-        _error_logger.error(f'Failed to save AttackLog: {exc}', exc_info=True)
+        _error_logger.error(
+            f'Failed to save AttackLog: {exc}',
+            exc_info=True,
+        )
         return None
 
-    # Update aggregate counters — failures here shouldn't roll back
-    # the AttackLog row itself, so each step is wrapped independently.
+    # Update aggregate counters. A failure here must not invalidate the
+    # AttackLog row that was already written.
     try:
         if attack.rule_triggered:
             RuleStats.record_trigger(attack.rule_triggered)
+
         if attack.detector_name:
             DetectorStats.record_detection(
                 attack.detector_name,
                 is_false_positive=event.get('is_false_positive', False),
             )
+
     except Exception as exc:
-        _error_logger.error(f'Failed to update rule/detector stats: {exc}', exc_info=True)
+        _error_logger.error(
+            f'Failed to update rule/detector stats: {exc}',
+            exc_info=True,
+        )
 
-    # Auto-block only after multiple blocked attacks from the same IP.
-    AUTO_BLOCK_THRESHOLD = 3
-
+    # Auto-block after multiple blocked attacks from the same IP.
     if attack.blocked and event.get('auto_block', True):
         try:
             blocked_count = AttackLog.objects.filter(
-                 ip_address=attack.ip_address,
+                ip_address=attack.ip_address,
                 blocked=True,
-             ).count()
+            ).count()
 
             if blocked_count >= AUTO_BLOCK_THRESHOLD:
-             BlockedIP.block(
-                 attack.ip_address,
-                 reason=(
-                       f'{blocked_count} blocked attacks '
-                      f'(latest: {attack.attack_type} via rule {attack.rule_triggered or "unknown"})'
+                BlockedIP.block(
+                    attack.ip_address,
+                    reason=(
+                        f'{blocked_count} blocked attacks '
+                        f'(latest: {attack.attack_type} via rule '
+                        f'{attack.rule_triggered or "unknown"})'
                     ),
-             )
-        except Exception as exc:
-            _error_logger.error(f'Failed to update BlockedIP: {exc}', exc_info=True)
+                )
 
-    # Write the structured line to attacks.log
+        except Exception as exc:
+            _error_logger.error(
+                f'Failed to update BlockedIP: {exc}',
+                exc_info=True,
+            )
+
+    # Write the structured attack event to attacks.log.
     try:
         logger.info(
             'attack_detected',
-            extra={'attack_data': {
-                'ip_address': attack.ip_address,
-                'url': attack.url,
-                'method': attack.method,
-                'attack_type': attack.attack_type,
-                'severity': attack.severity,
-                'risk_score': attack.risk_score,
-                'rule_triggered': attack.rule_triggered,
-                'detector_name': attack.detector_name,
-                'blocked': attack.blocked,
-                'response_code': attack.response_code,
-            }},
+            extra={
+                'attack_data': {
+                    'ip_address': attack.ip_address,
+                    'url': attack.url,
+                    'method': attack.method,
+                    'attack_type': attack.attack_type,
+                    'severity': attack.severity,
+                    'risk_score': attack.risk_score,
+                    'rule_triggered': attack.rule_triggered,
+                    'detector_name': attack.detector_name,
+                    'blocked': attack.blocked,
+                    'response_code': attack.response_code,
+                }
+            },
         )
+
     except Exception as exc:
-        _error_logger.error(f'Failed to write attacks.log entry: {exc}', exc_info=True)
+        _error_logger.error(
+            f'Failed to write attacks.log entry: {exc}',
+            exc_info=True,
+        )
 
     return attack
 
 
-def log_access(ip_address: str, url: str, method: str, status_code: Optional[int] = None) -> None:
+def log_access(
+    ip_address: str,
+    url: str,
+    method: str,
+    status_code: Optional[int] = None,
+) -> None:
     """
-    Lightweight access-log helper for middleware to call on every
-    request (not just attacks). Kept separate from log_attack since
-    most requests are not attacks.
+    Lightweight access-log helper for middleware.
+
+    This function uses only the standard logging system and therefore
+    does not require Django to be imported.
     """
     access_logger = get_logger('waf.access')
+
     try:
-        access_logger.info(f'{method} {url} from {ip_address} -> {status_code}')
+        access_logger.info(
+            f'{method} {url} from {ip_address} -> {status_code}'
+        )
+
     except Exception as exc:
-        _error_logger.error(f'Failed to write access.log entry: {exc}', exc_info=True)
+        _error_logger.error(
+            f'Failed to write access.log entry: {exc}',
+            exc_info=True,
+        )

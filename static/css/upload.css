@@ -1,0 +1,125 @@
+/* ============================================
+   VulneraBlog — Upload / Edit Post Form
+   ============================================ */
+
+.upload-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+
+.upload-header {
+    margin-bottom: 36px;
+}
+
+.upload-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.upload-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* ── Two-column layout ───────────────────────── */
+.upload-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+    align-items: start;
+}
+
+.upload-main,
+.upload-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Textarea ────────────────────────────────── */
+.form-textarea {
+    min-height: 420px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+/* ── File input ──────────────────────────────── */
+.form-file-input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px dashed var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    padding: 12px 14px;
+    cursor: pointer;
+}
+
+/* ── Cover image preview ─────────────────────── */
+.cover-preview {
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.cover-preview img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+/* ── Action buttons ──────────────────────────── */
+.upload-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.btn-publish {
+    width: 100%;
+    padding: 13px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity var(--transition);
+}
+
+.btn-publish:hover {
+    opacity: 0.88;
+}
+
+.btn-cancel {
+    display: block;
+    text-align: center;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    transition: all var(--transition);
+    font-family: var(--font-body);
+}
+
+.btn-cancel:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 900px) {
+    .upload-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

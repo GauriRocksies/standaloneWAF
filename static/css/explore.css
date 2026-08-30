@@ -1,0 +1,76 @@
+/* ============================================
+   VulneraBlog — Explore Page
+   ============================================ */
+
+.explore-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+
+.explore-header {
+    margin-bottom: 32px;
+}
+
+.explore-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+}
+
+.explore-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 480px;
+}
+
+/* ── Category tabs ───────────────────────────── */
+.category-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.category-tabs::-webkit-scrollbar { display: none; }
+
+.cat-tab {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.cat-tab:hover { color: var(--text-secondary); }
+
+.cat-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent);
+}
+
+/* ── Explore grid (same as post grid) ─────────── */
+.explore-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* inherit post-card styles from home.css via base */
+
+@media (max-width: 1024px) {
+    .explore-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .explore-grid { grid-template-columns: 1fr; }
+}

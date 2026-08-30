@@ -8,6 +8,8 @@ Section 20 of the extraction spec.
 
 import ast
 import os
+import subprocess
+import sys
 import unittest
 
 from waf_core import WAFEngine, WAFRequest
@@ -20,10 +22,6 @@ class TestWAFEngineNormalRequests(unittest.TestCase):
 
     def setUp(self):
         self.engine = WAFEngine()
-        # A realistic browser UA avoids the (correctly weak/low-score)
-        # empty-User-Agent signal from user_agent.py so these tests
-        # isolate "is this legitimate traffic blocked" from that
-        # separate, intentional heuristic.
         self.browser_headers = {
             "User-Agent": (
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -68,12 +66,17 @@ class TestWAFEngineDecisionShape(unittest.TestCase):
         self.assertEqual(decision.action, BLOCK)
         self.assertIsInstance(decision.risk_score, int)
         self.assertIn("XSS-001", decision.rules)
-        self.assertTrue(any(d.get("detector") == "xss_detector" for d in decision.detections))
+        self.assertTrue(
+            any(d.get("detector") == "xss_detector" for d in decision.detections)
+        )
 
     def test_no_detections_is_zero_score_allow(self):
         engine = WAFEngine()
         decision = engine.inspect(
-            WAFRequest(path="/", headers={"User-Agent": "Mozilla/5.0 (compatible)"})
+            WAFRequest(
+                path="/",
+                headers={"User-Agent": "Mozilla/5.0 (compatible)"},
+            )
         )
         self.assertEqual(decision.action, ALLOW)
         self.assertEqual(decision.detections, [])
@@ -91,7 +94,12 @@ class TestOnDetectionHook(unittest.TestCase):
             calls.append((request, list(detector_results), decision))
 
         engine = WAFEngine(on_detection=hook)
-        engine.inspect(WAFRequest(path="/search", query_params={"q": "<script>alert(1)</script>"}))
+        engine.inspect(
+            WAFRequest(
+                path="/search",
+                query_params={"q": "<script>alert(1)</script>"},
+            )
+        )
 
         self.assertEqual(len(calls), 1)
         _, results, decision = calls[0]
@@ -102,7 +110,10 @@ class TestOnDetectionHook(unittest.TestCase):
         calls = []
         engine = WAFEngine(on_detection=lambda *a: calls.append(a))
         engine.inspect(
-            WAFRequest(path="/", headers={"User-Agent": "Mozilla/5.0 (compatible)"})
+            WAFRequest(
+                path="/",
+                headers={"User-Agent": "Mozilla/5.0 (compatible)"},
+            )
         )
         self.assertEqual(calls, [])
 
@@ -112,7 +123,10 @@ class TestOnDetectionHook(unittest.TestCase):
 
         engine = WAFEngine(on_detection=broken_hook)
         decision = engine.inspect(
-            WAFRequest(path="/search", query_params={"q": "<script>alert(1)</script>"})
+            WAFRequest(
+                path="/search",
+                query_params={"q": "<script>alert(1)</script>"},
+            )
         )
         self.assertEqual(decision.action, BLOCK)
 
@@ -131,48 +145,109 @@ class TestDjangoIndependence(unittest.TestCase):
     dependency, and this must be provable, not just claimed."""
 
     def test_import_does_not_require_django(self):
-        # If Django somehow ended up importable in this environment,
-        # this at least proves waf_core doesn't *fail* without it by
-        # re-importing fresh; the static scan below is the real proof.
         import importlib
         import waf_core
 
         importlib.reload(waf_core)
 
     def test_engine_runs_without_importing_django(self):
-        import sys
+        """
+        Run the standalone engine in a fresh Python subprocess.
 
-        self.assertNotIn("django", sys.modules, "Django got imported somewhere before this test ran")
-        engine = WAFEngine()
-        engine.inspect(WAFRequest(path="/"))
-        self.assertNotIn("django", sys.modules, "waf_core.engine.inspect() imported Django")
+        The full unittest suite contains Django tests, so checking
+        sys.modules in this process is unreliable: another test may
+        already have imported Django. A subprocess gives this test a
+        genuinely clean interpreter.
+        """
+        project_root = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..")
+        )
+
+        script = """
+import sys
+
+from waf_core import WAFEngine, WAFRequest
+
+if "django" in sys.modules:
+    raise SystemExit("Django was imported before waf_core was tested")
+
+engine = WAFEngine()
+decision = engine.inspect(WAFRequest(path="/"))
+
+if "django" in sys.modules:
+    raise SystemExit("waf_core.engine.inspect() imported Django")
+
+print("standalone waf_core execution: OK")
+"""
+
+        env = os.environ.copy()
+        env.pop("DJANGO_SETTINGS_MODULE", None)
+
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            cwd=project_root,
+            env=env,
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(
+            result.returncode,
+            0,
+            msg=(
+                "Standalone waf_core subprocess failed.\n"
+                f"stdout:\n{result.stdout}\n"
+                f"stderr:\n{result.stderr}"
+            ),
+        )
+
+        self.assertIn(
+            "standalone waf_core execution: OK",
+            result.stdout,
+        )
 
     def test_no_django_imports_in_waf_core_source(self):
         """Static AST scan: no waf_core module may contain an `import
         django` or `from django...` statement anywhere in its source,
         regardless of whether that branch is reachable at runtime."""
-        waf_core_dir = os.path.join(os.path.dirname(__file__), "..", "waf_core")
+        waf_core_dir = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "waf_core",
+        )
         offenders = []
 
         for root, _dirs, files in os.walk(waf_core_dir):
             for filename in files:
                 if not filename.endswith(".py"):
                     continue
+
                 filepath = os.path.join(root, filename)
+
                 with open(filepath, "r", encoding="utf-8") as fh:
                     tree = ast.parse(fh.read(), filename=filepath)
+
                 for node in ast.walk(tree):
                     if isinstance(node, ast.Import):
                         for alias in node.names:
-                            if alias.name == "django" or alias.name.startswith("django."):
+                            if (
+                                alias.name == "django"
+                                or alias.name.startswith("django.")
+                            ):
                                 offenders.append(filepath)
+
                     elif isinstance(node, ast.ImportFrom):
                         if node.module and (
-                            node.module == "django" or node.module.startswith("django.")
+                            node.module == "django"
+                            or node.module.startswith("django.")
                         ):
                             offenders.append(filepath)
 
-        self.assertEqual(offenders, [], f"Django imports found in: {offenders}")
+        self.assertEqual(
+            offenders,
+            [],
+            f"Django imports found in: {offenders}",
+        )
 
 
 if __name__ == "__main__":
