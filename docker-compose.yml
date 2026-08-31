@@ -1,0 +1,122 @@
+# docker-compose.yml
+#
+#   client -> nginx (:8080) -> waf (FastAPI verdict service, :9000)
+#                                  -> origin-django (:8000)  [default]
+#                                  -> origin-flask  (:5000)  [profile: flask]
+#
+# `waf`'s UPSTREAM_HOST/UPSTREAM_PORT is the ONLY thing that changes
+# which origin is protected — no WAF source code changes. See the
+# "Switching origins" section in README.md.
+#
+# Usage:
+#   docker compose up --build                  # Django origin (default)
+#   docker compose --profile flask up --build waf-flask-demo  # see README
+#   docker compose down
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vulnerablog}
+      POSTGRES_USER: ${DB_USER:-vulnerablog}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    volumes:
+      - waf_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-vulnerablog}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - wafnet
+
+  origin-django:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-change-me-to-a-real-secret-key}
+      DEBUG: ${DEBUG:-False}
+      WAF_AUTO_BLOCK: ${WAF_AUTO_BLOCK:-True}
+      DB_NAME: ${DB_NAME:-vulnerablog}
+      DB_USER: ${DB_USER:-vulnerablog}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      # Inside Docker, the DB is reached by Compose service name, not
+      # "localhost" (localhost = this container).
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # Exposed for local debugging only — real traffic goes through
+      # nginx -> waf, not directly here.
+      - "8000:8000"
+    networks:
+      - wafnet
+
+  waf:
+    build:
+      context: .
+      dockerfile: Dockerfile.waf
+    restart: unless-stopped
+    environment:
+      DB_NAME: ${DB_NAME:-vulnerablog}
+      DB_USER: ${DB_USER:-vulnerablog}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      DB_HOST: db
+      DB_PORT: 5432
+      SECRET_KEY: ${SECRET_KEY:-change-me-to-a-real-secret-key}
+      # --- this is what makes the WAF "standalone": swap these two
+      # to point at any origin, without touching WAF code. ---
+      UPSTREAM_HOST: ${UPSTREAM_HOST:-origin-django}
+      UPSTREAM_PORT: ${UPSTREAM_PORT:-8000}
+      UPSTREAM_SCHEME: ${UPSTREAM_SCHEME:-http}
+      WAF_BLOCK_THRESHOLD: ${WAF_BLOCK_THRESHOLD:-70}
+      WAF_ENABLED_RULES: ${WAF_ENABLED_RULES:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      origin-django:
+        condition: service_healthy
+    networks:
+      - wafnet
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      waf:
+        condition: service_healthy
+    networks:
+      - wafnet
+
+  # --- Origin-switching demo (Task 3/9): `docker compose --profile
+  # flask up origin-flask` starts a second origin. Point `waf` at it
+  # by overriding UPSTREAM_HOST=origin-flask / UPSTREAM_PORT=5000
+  # (e.g. `docker compose up -e UPSTREAM_HOST=origin-flask ...` or by
+  # editing .env) and restarting the `waf` service — nothing in
+  # waf_core/ or waf_proxy/ changes.
+  origin-flask:
+    build:
+      context: .
+      dockerfile: test_flask_app/Dockerfile
+    restart: unless-stopped
+    profiles: ["flask"]
+    ports:
+      - "5000:5000"
+    networks:
+      - wafnet
+
+networks:
+  wafnet:
+    driver: bridge
+
+volumes:
+  waf_pg_data:
