@@ -42,6 +42,7 @@ from waf.engine import WAFEngine  # noqa: E402  (must follow django.setup())
 from waf.constants import BLOCK, BLOCK_MESSAGE  # noqa: E402
 
 from waf_proxy.adapter import build_adapted_request  # noqa: E402
+from waf.models import BlockedIP  # noqa: E402
 
 logger = logging.getLogger("waf_proxy")
 
@@ -56,6 +57,13 @@ engine = WAFEngine()
 # ASGI/async views call sync ORM code — not a change to Member 1's
 # engine, just how Member 2's async handler invokes it.
 inspect_async = sync_to_async(engine.inspect, thread_sensitive=True)
+
+# BlockedIP.is_blocked() does a synchronous Django ORM read. Same
+# thread_sensitive rationale as inspect_async above: Django refuses
+# sync ORM calls made directly on an async event loop thread, so this
+# runs on Django's dedicated sync thread instead of duplicating
+# Member 3's blocklist with proxy-local state.
+is_blocked_async = sync_to_async(BlockedIP.is_blocked, thread_sensitive=True)
 
 HOP_BY_HOP_HEADERS = {
     "connection", "keep-alive", "proxy-authenticate", "proxy-authorization",
@@ -90,6 +98,19 @@ async def health():
 )
 async def gate(full_path: str, request: Request):
     client_ip = _client_ip(request)
+    # Reject already-blocked IPs before running detectors at all —
+    # mirrors waf_integration/middleware.py's Django-side check, and
+    # reuses the same BlockedIP table (populated by Member 3's
+    # auto-block-after-repeated-attacks logic) rather than a second,
+    # proxy-local blocklist.
+    if await is_blocked_async(client_ip):
+        logger.warning("BLOCKED (blocklisted IP) %s %s from %s",
+                        request.method, request.url.path, client_ip)
+        return Response(
+            content=BLOCK_MESSAGE,
+            status_code=403,
+            media_type="text/plain",
+        )
 
     adapted = await build_adapted_request(request, client_ip)
 
