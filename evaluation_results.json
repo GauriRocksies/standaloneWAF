@@ -1,0 +1,789 @@
+{
+  "detection_performance": {
+    "n_benign": 12,
+    "n_malicious": 17,
+    "n_total": 29,
+    "classes": [
+      {
+        "attack_class": "command_injection",
+        "tp": 4,
+        "fp": 0,
+        "fn": 0,
+        "tn": 25,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      {
+        "attack_class": "path_traversal",
+        "tp": 3,
+        "fp": 1,
+        "fn": 0,
+        "tn": 25,
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.8571428571428571
+      },
+      {
+        "attack_class": "sql_injection",
+        "tp": 4,
+        "fp": 1,
+        "fn": 1,
+        "tn": 23,
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1": 0.8000000000000002
+      },
+      {
+        "attack_class": "xss",
+        "tp": 5,
+        "fp": 0,
+        "fn": 0,
+        "tn": 24,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      }
+    ],
+    "macro_precision": 0.8875,
+    "macro_recall": 0.95,
+    "macro_f1": 0.9142857142857144,
+    "micro_tp": 16,
+    "micro_fp": 2,
+    "micro_fn": 1,
+    "micro_tn": 97
+  },
+  "false_positive_analysis": {
+    "n_benign": 12,
+    "n_benign_blocked": 0,
+    "aggregate_false_positive_rate": 0.0,
+    "blocked_case_ids": [],
+    "per_detector": [
+      {
+        "detector": "sqli_detector",
+        "false_alarm_cases": 1,
+        "false_alarm_rate": 0.08333333333333333,
+        "cases": [
+          "B06"
+        ]
+      }
+    ]
+  },
+  "evasion_resistance": {
+    "n_cases": 6,
+    "caught_as_expected": 6,
+    "detection_rate": 1.0,
+    "cases": [
+      {
+        "case_id": "EV01",
+        "family": "xss",
+        "variant": "url-encoded-once",
+        "expected": "xss",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "rules": [
+          "XSS-001"
+        ]
+      },
+      {
+        "case_id": "EV02",
+        "family": "xss",
+        "variant": "url-encoded-twice",
+        "expected": "xss",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "rules": [
+          "XSS-001"
+        ]
+      },
+      {
+        "case_id": "EV03",
+        "family": "xss",
+        "variant": "html-entity",
+        "expected": "xss",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "rules": [
+          "XSS-001"
+        ]
+      },
+      {
+        "case_id": "EV04",
+        "family": "sqli",
+        "variant": "url-encoded-union",
+        "expected": "sql_injection",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "rules": [
+          "SQLI-001"
+        ]
+      },
+      {
+        "case_id": "EV05",
+        "family": "path",
+        "variant": "url-encoded-traversal",
+        "expected": "path_traversal",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "rules": [
+          "PATH-004"
+        ]
+      },
+      {
+        "case_id": "EV06",
+        "family": "path",
+        "variant": "double-encoded-traversal",
+        "expected": "path_traversal",
+        "caught_as_expected": true,
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "rules": [
+          "PATH-004"
+        ]
+      }
+    ]
+  },
+  "raw": {
+    "benign": [
+      {
+        "case_id": "B01",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B02",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B03",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B04",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B05",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B06",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 45,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)"
+        ]
+      },
+      {
+        "case_id": "B07",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B08",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B09",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B10",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B11",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B12",
+        "label": "benign",
+        "family": "",
+        "variant": "",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      }
+    ],
+    "malicious": [
+      {
+        "case_id": "SQL01",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "tautology",
+        "action": "allow",
+        "risk_score": 45,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)"
+        ]
+      },
+      {
+        "case_id": "SQL02",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "union-select",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection"
+        ]
+      },
+      {
+        "case_id": "SQL03",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "drop-table",
+        "action": "block",
+        "risk_score": 95,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-003"
+        ],
+        "reasons": [
+          "destructive DDL"
+        ]
+      },
+      {
+        "case_id": "SQL04",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "and-tautology",
+        "action": "allow",
+        "risk_score": 40,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-008"
+        ],
+        "reasons": [
+          "AND tautology (e.g. AND 1=1)"
+        ]
+      },
+      {
+        "case_id": "SQL05",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "select-from",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "XSS01",
+        "label": "xss",
+        "family": "xss",
+        "variant": "script-tag",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS02",
+        "label": "xss",
+        "family": "xss",
+        "variant": "event-handler",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS03",
+        "label": "xss",
+        "family": "xss",
+        "variant": "iframe-javascript",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-002"
+        ],
+        "reasons": [
+          "javascript: URI scheme; corroborated by 3 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS04",
+        "label": "xss",
+        "family": "xss",
+        "variant": "cookie-script",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "cookie_validator",
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total",
+          "inline script tag found in cookie 'theme'"
+        ]
+      },
+      {
+        "case_id": "XSS05",
+        "label": "xss",
+        "family": "xss",
+        "variant": "header-script",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "header_validator",
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total",
+          "inline script tag found in header 'Referer'"
+        ]
+      },
+      {
+        "case_id": "CMD01",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "semicolon-cat",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection",
+          "path_traversal"
+        ],
+        "detectors": [
+          "command_detector",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004",
+          "CMD-001"
+        ],
+        "reasons": [
+          "Unix password file",
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD02",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "and-whoami",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD03",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "powershell",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-003"
+        ],
+        "reasons": [
+          "PowerShell invocation"
+        ]
+      },
+      {
+        "case_id": "CMD04",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "command-substitution",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command"
+        ]
+      },
+      {
+        "case_id": "PATH01",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "dot-dot",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH02",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "unix-passwd",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH03",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "url-encoded",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      }
+    ],
+    "evasion": [
+      {
+        "case_id": "EV01",
+        "label": "xss",
+        "family": "xss",
+        "variant": "url-encoded-once",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "EV02",
+        "label": "xss",
+        "family": "xss",
+        "variant": "url-encoded-twice",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "EV03",
+        "label": "xss",
+        "family": "xss",
+        "variant": "html-entity",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "EV04",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "url-encoded-union",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection"
+        ]
+      },
+      {
+        "case_id": "EV05",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "url-encoded-traversal",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "EV06",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "double-encoded-traversal",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 2 other traversal indicator(s)"
+        ]
+      }
+    ]
+  }
+}

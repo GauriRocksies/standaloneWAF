@@ -31,9 +31,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
-   
-    'waf.middleware.WAFMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -41,6 +38,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if config("WAF_MIDDLEWARE_ENABLED", default=True, cast=bool):
+    MIDDLEWARE.insert(1, 'waf.middleware.WAFMiddleware')
 ROOT_URLCONF = 'vulnerablog.urls'
 
 TEMPLATES = [
