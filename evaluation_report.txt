@@ -1,0 +1,51 @@
+WAF EVALUATION REPORT
+================================================================================
+
+V-A. Detection Performance
+--------------------------------------------------------------------------------
+Evaluation corpus: 29 requests (17 malicious, 12 benign).
+
+Class                    TP   FP   FN   Precision      Recall          F1
+command_injection         4    0    0     100.00%     100.00%     100.00%
+path_traversal            3    1    0      75.00%     100.00%      85.71%
+sql_injection             4    1    1      80.00%      80.00%      80.00%
+xss                       5    0    0     100.00%     100.00%     100.00%
+
+Macro-average: precision=88.75%, recall=95.00%, F1=91.43%.
+
+V-B. False-Positive Analysis
+--------------------------------------------------------------------------------
+Benign requests incorrectly blocked: 0/12 (0.00%).
+No benign case was blocked.
+
+Detector                         False alarms        Rate
+sqli_detector                               1       8.33%
+
+V-C. Evasion Resistance
+--------------------------------------------------------------------------------
+Encoded/obfuscated cases caught with the expected class: 6/6 (100.00%).
+
+Case    Family    Variant                         Caught    Action
+EV01    xss       url-encoded-once                  True     block
+EV02    xss       url-encoded-twice                 True     block
+EV03    xss       html-entity                       True     block
+EV04    sqli      url-encoded-union                 True     block
+EV05    path      url-encoded-traversal             True     block
+EV06    path      double-encoded-traversal          True     block
+
+V-D. Latency Overhead
+--------------------------------------------------------------------------------
+Not run. Supply --live, --proxy-url, and --origin-url.
+
+V-E. Cross-Framework Portability
+--------------------------------------------------------------------------------
+Not run. Supply --cross-framework with both proxy URLs to exercise Django and Flask origins.
+
+PAPER-READY PARAGRAPHS
+================================================================================
+
+Detection Performance: The evaluation corpus contained 29 labeled requests, including 17 malicious and 12 benign requests. Across the evaluated attack classes, the macro-averaged precision was 88.75%, recall was 95.00%, and F1-score was 91.43%.
+False-Positive Analysis: The WAF incorrectly blocked 0 of 12 benign requests, giving an aggregate false-positive rate of 0.00%.
+Evasion Resistance: The encoded/obfuscated test set contained 6 cases, of which 6 were detected with the expected attack class, corresponding to a detection rate of 100.00%.
+
+Do not change the Results sections to claim measurements that the script did not actually run. Human beings invented papers; apparently we also invented the ancient ritual of typing [to be inserted] and hoping for the best.

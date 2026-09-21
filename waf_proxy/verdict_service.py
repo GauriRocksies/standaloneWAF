@@ -49,6 +49,33 @@ logger = logging.getLogger("waf_proxy")
 app = FastAPI(title="WAF Verdict Service")
 engine = WAFEngine()
 
+# --------------------------------------------------------------------
+# Reusable HTTP client for forwarding allowed requests.
+#
+# The previous implementation created a new AsyncClient for EVERY
+# request. That prevents connection reuse and can add substantial
+# latency to the proxy path.
+#
+# A single application-scoped client maintains a connection pool and
+# reuses upstream connections between requests.
+# --------------------------------------------------------------------
+http_client: httpx.AsyncClient | None = None
+
+
+@app.on_event("startup")
+async def startup():
+    global http_client
+    http_client = httpx.AsyncClient(timeout=10.0)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    global http_client
+    if http_client is not None:
+        await http_client.aclose()
+        http_client = None
+
+
 # engine.inspect() is synchronous and, via log_attack(), does Django
 # ORM writes (AttackLog/BlockedIP/RuleStats). Django refuses sync ORM
 # calls made directly on an async event loop thread ("You cannot call
@@ -66,8 +93,15 @@ inspect_async = sync_to_async(engine.inspect, thread_sensitive=True)
 is_blocked_async = sync_to_async(BlockedIP.is_blocked, thread_sensitive=True)
 
 HOP_BY_HOP_HEADERS = {
-    "connection", "keep-alive", "proxy-authenticate", "proxy-authorization",
-    "te", "trailers", "transfer-encoding", "upgrade", "content-length",
+    "connection",
+    "keep-alive",
+    "proxy-authenticate",
+    "proxy-authorization",
+    "te",
+    "trailers",
+    "transfer-encoding",
+    "upgrade",
+    "content-length",
 }
 
 
@@ -81,7 +115,9 @@ def _get_upstream_base_url() -> str:
 def _client_ip(request: Request) -> str:
     # Trust X-Real-IP / X-Forwarded-For from Nginx (set in nginx.conf);
     # fall back to the direct peer address.
-    forwarded = request.headers.get("x-real-ip") or request.headers.get("x-forwarded-for")
+    forwarded = request.headers.get("x-real-ip") or request.headers.get(
+        "x-forwarded-for"
+    )
     if forwarded:
         return forwarded.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
@@ -98,14 +134,19 @@ async def health():
 )
 async def gate(full_path: str, request: Request):
     client_ip = _client_ip(request)
+
     # Reject already-blocked IPs before running detectors at all —
     # mirrors waf_integration/middleware.py's Django-side check, and
     # reuses the same BlockedIP table (populated by Member 3's
     # auto-block-after-repeated-attacks logic) rather than a second,
     # proxy-local blocklist.
     if await is_blocked_async(client_ip):
-        logger.warning("BLOCKED (blocklisted IP) %s %s from %s",
-                        request.method, request.url.path, client_ip)
+        logger.warning(
+            "BLOCKED (blocklisted IP) %s %s from %s",
+            request.method,
+            request.url.path,
+            client_ip,
+        )
         return Response(
             content=BLOCK_MESSAGE,
             status_code=403,
@@ -119,8 +160,11 @@ async def gate(full_path: str, request: Request):
     if decision.action == BLOCK:
         logger.warning(
             "BLOCKED %s %s from %s (risk=%d, rules=%s)",
-            adapted.method, adapted.path, client_ip,
-            decision.risk_score, decision.rules,
+            adapted.method,
+            adapted.path,
+            client_ip,
+            decision.risk_score,
+            decision.rules,
         )
         return Response(
             content=BLOCK_MESSAGE,
@@ -130,22 +174,38 @@ async def gate(full_path: str, request: Request):
 
     # ALLOW -> forward to the configurable origin.
     upstream_url = f"{_get_upstream_base_url()}{request.url.path}"
+
     forward_headers = {
-        k: v for k, v in request.headers.items() if k.lower() not in HOP_BY_HOP_HEADERS
+        k: v
+        for k, v in request.headers.items()
+        if k.lower() not in HOP_BY_HOP_HEADERS
     }
+
     forward_headers["X-Forwarded-For"] = client_ip
     forward_headers["X-Real-IP"] = client_ip
-    forward_headers["X-Forwarded-Proto"] = request.headers.get("x-forwarded-proto", "http")
+    forward_headers["X-Forwarded-Proto"] = request.headers.get(
+        "x-forwarded-proto", "http"
+    )
 
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            upstream_response = await client.request(
-                method=request.method,
-                url=upstream_url,
-                params=request.query_params,
-                headers=forward_headers,
-                content=adapted.body,
+        # Reuse the application-scoped AsyncClient instead of creating
+        # a new connection pool for every request.
+        if http_client is None:
+            logger.error("HTTP client is not initialized")
+            return Response(
+                content="WAF proxy unavailable.",
+                status_code=503,
+                media_type="text/plain",
             )
+
+        upstream_response = await http_client.request(
+            method=request.method,
+            url=upstream_url,
+            params=request.query_params,
+            headers=forward_headers,
+            content=adapted.body,
+        )
+
     except httpx.RequestError:
         logger.exception("Upstream origin unreachable: %s", upstream_url)
         return Response(
@@ -156,12 +216,18 @@ async def gate(full_path: str, request: Request):
 
     logger.info(
         "ALLOWED %s %s from %s -> origin %s",
-        adapted.method, adapted.path, client_ip, upstream_response.status_code,
+        adapted.method,
+        adapted.path,
+        client_ip,
+        upstream_response.status_code,
     )
 
     response_headers = {
-        k: v for k, v in upstream_response.headers.items() if k.lower() not in HOP_BY_HOP_HEADERS
+        k: v
+        for k, v in upstream_response.headers.items()
+        if k.lower() not in HOP_BY_HOP_HEADERS
     }
+
     return Response(
         content=upstream_response.content,
         status_code=upstream_response.status_code,
