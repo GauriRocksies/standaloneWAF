@@ -1,70 +1,292 @@
 {
-  "detection_performance": {
-    "n_benign": 12,
-    "n_malicious": 17,
-    "n_total": 29,
-    "classes": [
+  "decision_level": {
+    "definition": "positive = malicious label; predicted positive = final action == block",
+    "overall": {
+      "n": 200,
+      "tp": 68,
+      "fp": 7,
+      "tn": 93,
+      "fn": 32,
+      "accuracy": 0.805,
+      "precision": 0.9066666666666666,
+      "recall": 0.68,
+      "f1": 0.7771428571428572,
+      "false_positive_rate": 0.07
+    },
+    "per_category": [
       {
         "attack_class": "command_injection",
-        "tp": 4,
-        "fp": 0,
-        "fn": 0,
-        "tn": 25,
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0
+        "n": 25,
+        "detected": 20,
+        "blocked": 17,
+        "detection_rate": 0.8,
+        "block_rate": 0.68,
+        "missed_case_ids": [
+          "CMD04",
+          "CMD06",
+          "CMD13",
+          "CMD14",
+          "CMD15",
+          "CMD16",
+          "CMD19",
+          "CMD25"
+        ]
       },
       {
         "attack_class": "path_traversal",
-        "tp": 3,
-        "fp": 1,
-        "fn": 0,
-        "tn": 25,
-        "precision": 0.75,
-        "recall": 1.0,
-        "f1": 0.8571428571428571
+        "n": 25,
+        "detected": 23,
+        "blocked": 23,
+        "detection_rate": 0.92,
+        "block_rate": 0.92,
+        "missed_case_ids": [
+          "PATH15",
+          "PATH23"
+        ]
       },
       {
         "attack_class": "sql_injection",
-        "tp": 4,
-        "fp": 1,
-        "fn": 1,
-        "tn": 23,
-        "precision": 0.8,
-        "recall": 0.8,
-        "f1": 0.8000000000000002
+        "n": 25,
+        "detected": 16,
+        "blocked": 7,
+        "detection_rate": 0.64,
+        "block_rate": 0.28,
+        "missed_case_ids": [
+          "SQL01",
+          "SQL04",
+          "SQL05",
+          "SQL06",
+          "SQL07",
+          "SQL08",
+          "SQL09",
+          "SQL11",
+          "SQL12",
+          "SQL13",
+          "SQL15",
+          "SQL16",
+          "SQL17",
+          "SQL18",
+          "SQL20",
+          "SQL21",
+          "SQL22",
+          "SQL23"
+        ]
       },
       {
         "attack_class": "xss",
-        "tp": 5,
-        "fp": 0,
-        "fn": 0,
-        "tn": 24,
-        "precision": 1.0,
-        "recall": 1.0,
-        "f1": 1.0
+        "n": 25,
+        "detected": 24,
+        "blocked": 21,
+        "detection_rate": 0.96,
+        "block_rate": 0.84,
+        "missed_case_ids": [
+          "XSS08",
+          "XSS15",
+          "XSS16",
+          "XSS25"
+        ]
       }
     ],
-    "macro_precision": 0.8875,
-    "macro_recall": 0.95,
-    "macro_f1": 0.9142857142857144,
-    "micro_tp": 16,
-    "micro_fp": 2,
-    "micro_fn": 1,
-    "micro_tn": 97
+    "by_split": {
+      "dev": {
+        "n": 29,
+        "tp": 13,
+        "fp": 0,
+        "tn": 12,
+        "fn": 4,
+        "accuracy": 0.8620689655172413,
+        "precision": 1.0,
+        "recall": 0.7647058823529411,
+        "f1": 0.8666666666666666,
+        "false_positive_rate": 0.0
+      },
+      "heldout": {
+        "n": 171,
+        "tp": 55,
+        "fp": 7,
+        "tn": 81,
+        "fn": 28,
+        "accuracy": 0.7953216374269005,
+        "precision": 0.8870967741935484,
+        "recall": 0.6626506024096386,
+        "f1": 0.7586206896551725,
+        "false_positive_rate": 0.07954545454545454
+      }
+    },
+    "false_positive_case_ids": [
+      "B33",
+      "B36",
+      "B37",
+      "B41",
+      "B44",
+      "B50",
+      "B56"
+    ],
+    "false_negative_case_ids": [
+      "SQL01",
+      "SQL04",
+      "SQL05",
+      "CMD04",
+      "SQL06",
+      "SQL07",
+      "SQL08",
+      "SQL09",
+      "SQL11",
+      "SQL12",
+      "SQL13",
+      "SQL15",
+      "SQL16",
+      "SQL17",
+      "SQL18",
+      "SQL20",
+      "SQL21",
+      "SQL22",
+      "SQL23",
+      "XSS08",
+      "XSS15",
+      "XSS16",
+      "XSS25",
+      "PATH15",
+      "PATH23",
+      "CMD06",
+      "CMD13",
+      "CMD14",
+      "CMD15",
+      "CMD16",
+      "CMD19",
+      "CMD25"
+    ]
+  },
+  "detection_performance": {
+    "n_benign": 100,
+    "n_malicious": 100,
+    "n_total": 200,
+    "classes": [
+      {
+        "attack_class": "command_injection",
+        "tp": 20,
+        "fp": 8,
+        "fn": 5,
+        "tn": 167,
+        "precision": 0.7142857142857143,
+        "recall": 0.8,
+        "f1": 0.7547169811320756
+      },
+      {
+        "attack_class": "path_traversal",
+        "tp": 23,
+        "fp": 7,
+        "fn": 2,
+        "tn": 168,
+        "precision": 0.7666666666666667,
+        "recall": 0.92,
+        "f1": 0.8363636363636363
+      },
+      {
+        "attack_class": "sql_injection",
+        "tp": 16,
+        "fp": 8,
+        "fn": 9,
+        "tn": 167,
+        "precision": 0.6666666666666666,
+        "recall": 0.64,
+        "f1": 0.6530612244897959
+      },
+      {
+        "attack_class": "xss",
+        "tp": 24,
+        "fp": 2,
+        "fn": 1,
+        "tn": 173,
+        "precision": 0.9230769230769231,
+        "recall": 0.96,
+        "f1": 0.9411764705882353
+      }
+    ],
+    "macro_precision": 0.7676739926739927,
+    "macro_recall": 0.8300000000000001,
+    "macro_f1": 0.7963295781434357,
+    "micro_tp": 83,
+    "micro_fp": 25,
+    "micro_fn": 17,
+    "micro_tn": 675
   },
   "false_positive_analysis": {
-    "n_benign": 12,
-    "n_benign_blocked": 0,
-    "aggregate_false_positive_rate": 0.0,
-    "blocked_case_ids": [],
+    "n_benign": 100,
+    "n_benign_blocked": 7,
+    "aggregate_false_positive_rate": 0.07,
+    "blocked_case_ids": [
+      "B33",
+      "B36",
+      "B37",
+      "B41",
+      "B44",
+      "B50",
+      "B56"
+    ],
     "per_detector": [
       {
-        "detector": "sqli_detector",
-        "false_alarm_cases": 1,
-        "false_alarm_rate": 0.08333333333333333,
+        "detector": "command_detector",
+        "false_alarm_cases": 8,
+        "false_alarm_rate": 0.08,
         "cases": [
-          "B06"
+          "B41",
+          "B42",
+          "B43",
+          "B44",
+          "B45",
+          "B46",
+          "B48",
+          "B74"
+        ]
+      },
+      {
+        "detector": "cookie_validator",
+        "false_alarm_cases": 1,
+        "false_alarm_rate": 0.01,
+        "cases": [
+          "B80"
+        ]
+      },
+      {
+        "detector": "directory_detector",
+        "false_alarm_cases": 1,
+        "false_alarm_rate": 0.01,
+        "cases": [
+          "B50"
+        ]
+      },
+      {
+        "detector": "sqli_detector",
+        "false_alarm_cases": 8,
+        "false_alarm_rate": 0.08,
+        "cases": [
+          "B06",
+          "B33",
+          "B34",
+          "B35",
+          "B36",
+          "B37",
+          "B38",
+          "B67"
+        ]
+      },
+      {
+        "detector": "user_agent_detector",
+        "false_alarm_cases": 2,
+        "false_alarm_rate": 0.02,
+        "cases": [
+          "B92",
+          "B93"
+        ]
+      },
+      {
+        "detector": "xss_detector",
+        "false_alarm_cases": 2,
+        "false_alarm_rate": 0.02,
+        "cases": [
+          "B55",
+          "B56"
         ]
       }
     ]
@@ -173,6 +395,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -185,6 +408,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -197,6 +421,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -209,6 +434,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -221,6 +447,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -233,6 +460,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 45,
         "predicted_attacks": [
@@ -253,6 +481,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -265,6 +494,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -277,6 +507,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -289,6 +520,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -301,6 +533,7 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -313,6 +546,1319 @@
         "label": "benign",
         "family": "",
         "variant": "",
+        "split": "dev",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B13",
+        "label": "benign",
+        "family": "benign",
+        "variant": "get-blog-slug",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B14",
+        "label": "benign",
+        "family": "benign",
+        "variant": "get-category-filters",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B15",
+        "label": "benign",
+        "family": "benign",
+        "variant": "get-pagination-and-sort",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B16",
+        "label": "benign",
+        "family": "benign",
+        "variant": "path-encoded-plus-signs",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B17",
+        "label": "benign",
+        "family": "benign",
+        "variant": "get-encoded-utf8-query",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B18",
+        "label": "benign",
+        "family": "benign",
+        "variant": "path-with-apostrophe",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B19",
+        "label": "benign",
+        "family": "benign",
+        "variant": "static-css-with-version",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B20",
+        "label": "benign",
+        "family": "benign",
+        "variant": "static-js-bundle",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B21",
+        "label": "benign",
+        "family": "benign",
+        "variant": "favicon-conditional-get",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B22",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-apostrophe",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B23",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-quoted-phrase",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B24",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-comparison-operators",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B25",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-brackets-and-plus",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B26",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-sql-keyword-select",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B27",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-sql-keyword-update",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B28",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-hindi",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B29",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-japanese",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B30",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-arabic",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B31",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-cyrillic",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B32",
+        "label": "benign",
+        "family": "benign",
+        "variant": "search-emoji",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B33",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-union-selected",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection"
+        ]
+      },
+      {
+        "case_id": "B34",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-delete-from",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-006"
+        ],
+        "reasons": [
+          "DELETE statement"
+        ]
+      },
+      {
+        "case_id": "B35",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-insert-into",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-004"
+        ],
+        "reasons": [
+          "INSERT statement"
+        ]
+      },
+      {
+        "case_id": "B36",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-information-schema",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 70,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-009"
+        ],
+        "reasons": [
+          "schema enumeration"
+        ]
+      },
+      {
+        "case_id": "B37",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-drop-table",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 95,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-003"
+        ],
+        "reasons": [
+          "destructive DDL"
+        ]
+      },
+      {
+        "case_id": "B38",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-sleep-call",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 65,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-010"
+        ],
+        "reasons": [
+          "MySQL time-based blind (sleep)"
+        ]
+      },
+      {
+        "case_id": "B39",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-sql-words-select-star",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B40",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-double-dash-and-hash",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B41",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-powershell",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-003"
+        ],
+        "reasons": [
+          "PowerShell invocation"
+        ]
+      },
+      {
+        "case_id": "B42",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-whoami",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-007"
+        ],
+        "reasons": [
+          "identity enumeration"
+        ]
+      },
+      {
+        "case_id": "B43",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-netcat",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 55,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-006"
+        ],
+        "reasons": [
+          "netcat (reverse shell tool)"
+        ]
+      },
+      {
+        "case_id": "B44",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-chaining-text",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "B45",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-markdown-backticks",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command"
+        ]
+      },
+      {
+        "case_id": "B46",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-jquery-dollar-paren",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command"
+        ]
+      },
+      {
+        "case_id": "B47",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-wget-curl",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B48",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-sleep-hours",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-010"
+        ],
+        "reasons": [
+          "shell-level time delay"
+        ]
+      },
+      {
+        "case_id": "B49",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-shell-words-cat-ping",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B50",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-path-word-etc-passwd",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file"
+        ]
+      },
+      {
+        "case_id": "B51",
+        "label": "benign",
+        "family": "benign",
+        "variant": "html-bold-paragraph",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B52",
+        "label": "benign",
+        "family": "benign",
+        "variant": "html-anchor-with-query",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B53",
+        "label": "benign",
+        "family": "benign",
+        "variant": "html-image-tag",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B54",
+        "label": "benign",
+        "family": "benign",
+        "variant": "html-blockquote-quotes",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B55",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-html-inline-svg-icon",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 40,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-005"
+        ],
+        "reasons": [
+          "svg tag (common onload vector)"
+        ]
+      },
+      {
+        "case_id": "B56",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-html-script-element-discussion",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag"
+        ]
+      },
+      {
+        "case_id": "B57",
+        "label": "benign",
+        "family": "benign",
+        "variant": "html-table-with-apostrophe",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B58",
+        "label": "benign",
+        "family": "benign",
+        "variant": "text-math-comparison",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B59",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-create-order",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B60",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-patch-profile-unicode-apostrophe",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B61",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-login",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B62",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-graphql-query",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B63",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-nested-search-filters",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B64",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-comment-mentions-sql-joins",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B65",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-feedback-ampersand",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B66",
+        "label": "benign",
+        "family": "benign",
+        "variant": "json-bengali-text",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B67",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-json-update-set-wording",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-005"
+        ],
+        "reasons": [
+          "UPDATE statement"
+        ]
+      },
+      {
+        "case_id": "B68",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-register-special-char-password",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B69",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-register-hyphenated-name-plus-email",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B70",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-login-quotes-in-password",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B71",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-contact-long-message",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B72",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-checkout-address-and-phone",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B73",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-profile-quotes-brackets-braces",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B74",
+        "label": "benign",
+        "family": "benign",
+        "variant": "form-new-post-markdown-list",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command"
+        ]
+      },
+      {
+        "case_id": "B75",
+        "label": "benign",
+        "family": "benign",
+        "variant": "multipart-avatar-upload",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B76",
+        "label": "benign",
+        "family": "benign",
+        "variant": "multipart-pdf-upload",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B77",
+        "label": "benign",
+        "family": "benign",
+        "variant": "cookies-session-and-csrf",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B78",
+        "label": "benign",
+        "family": "benign",
+        "variant": "cookies-analytics",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B79",
+        "label": "benign",
+        "family": "benign",
+        "variant": "cookie-base64-preferences",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B80",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-cookie-name-role",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 35,
+        "predicted_attacks": [
+          "other"
+        ],
+        "detectors": [
+          "cookie_validator"
+        ],
+        "rules": [
+          "COOKIE-003"
+        ],
+        "reasons": [
+          "suspicious cookie name 'role'"
+        ]
+      },
+      {
+        "case_id": "B81",
+        "label": "benign",
+        "family": "benign",
+        "variant": "cookie-pipe-and-colon-cart",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B82",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-bearer-jwt",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B83",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-accept-language-and-encoding",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B84",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-google-referer-with-query",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B85",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-multipart-content-type-boundary",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B86",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-xff-proxy-chain",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B87",
+        "label": "benign",
+        "family": "benign",
+        "variant": "header-basic-auth-and-xhr",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B88",
+        "label": "benign",
+        "family": "benign",
+        "variant": "method-options-cors-preflight",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B89",
+        "label": "benign",
+        "family": "benign",
+        "variant": "method-head",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B90",
+        "label": "benign",
+        "family": "benign",
+        "variant": "method-delete-resource",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B91",
+        "label": "benign",
+        "family": "benign",
+        "variant": "api-get-with-field-list",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B92",
+        "label": "benign",
+        "family": "benign",
+        "variant": "api-client-curl-user-agent",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 25,
+        "predicted_attacks": [
+          "other"
+        ],
+        "detectors": [
+          "user_agent_detector"
+        ],
+        "rules": [
+          "UA-014"
+        ],
+        "reasons": [
+          "User-Agent identifies known tool 'curl'"
+        ]
+      },
+      {
+        "case_id": "B93",
+        "label": "benign",
+        "family": "benign",
+        "variant": "api-client-python-requests-user-agent",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 40,
+        "predicted_attacks": [
+          "other"
+        ],
+        "detectors": [
+          "user_agent_detector"
+        ],
+        "rules": [
+          "UA-012"
+        ],
+        "reasons": [
+          "User-Agent identifies known tool 'python-requests'"
+        ]
+      },
+      {
+        "case_id": "B94",
+        "label": "benign",
+        "family": "benign",
+        "variant": "crawler-googlebot-user-agent",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B95",
+        "label": "benign",
+        "family": "benign",
+        "variant": "download-nested-relative-path",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B96",
+        "label": "benign",
+        "family": "benign",
+        "variant": "download-filename-with-space-and-parens",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B97",
+        "label": "benign",
+        "family": "benign",
+        "variant": "encoded-redirect-url",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B98",
+        "label": "benign",
+        "family": "benign",
+        "variant": "encoded-percent-sign-and-hex-colour",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B99",
+        "label": "benign",
+        "family": "benign",
+        "variant": "long-filter-query-string",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "B100",
+        "label": "benign",
+        "family": "benign",
+        "variant": "hard-negative-hex-literal-order-reference",
+        "split": "heldout",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -327,6 +1873,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "tautology",
+        "split": "dev",
         "action": "allow",
         "risk_score": 45,
         "predicted_attacks": [
@@ -347,6 +1894,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "union-select",
+        "split": "dev",
         "action": "block",
         "risk_score": 80,
         "predicted_attacks": [
@@ -367,6 +1915,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "drop-table",
+        "split": "dev",
         "action": "block",
         "risk_score": 95,
         "predicted_attacks": [
@@ -387,6 +1936,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "and-tautology",
+        "split": "dev",
         "action": "allow",
         "risk_score": 40,
         "predicted_attacks": [
@@ -407,6 +1957,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "select-from",
+        "split": "dev",
         "action": "allow",
         "risk_score": 0,
         "predicted_attacks": [],
@@ -419,6 +1970,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "script-tag",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -439,6 +1991,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "event-handler",
+        "split": "dev",
         "action": "block",
         "risk_score": 85,
         "predicted_attacks": [
@@ -459,6 +2012,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "iframe-javascript",
+        "split": "dev",
         "action": "block",
         "risk_score": 80,
         "predicted_attacks": [
@@ -479,6 +2033,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "cookie-script",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -501,6 +2056,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "header-script",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -523,6 +2079,7 @@
         "label": "command_injection",
         "family": "command",
         "variant": "semicolon-cat",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -547,6 +2104,7 @@
         "label": "command_injection",
         "family": "command",
         "variant": "and-whoami",
+        "split": "dev",
         "action": "block",
         "risk_score": 75,
         "predicted_attacks": [
@@ -567,6 +2125,7 @@
         "label": "command_injection",
         "family": "command",
         "variant": "powershell",
+        "split": "dev",
         "action": "block",
         "risk_score": 75,
         "predicted_attacks": [
@@ -587,6 +2146,7 @@
         "label": "command_injection",
         "family": "command",
         "variant": "command-substitution",
+        "split": "dev",
         "action": "allow",
         "risk_score": 60,
         "predicted_attacks": [
@@ -607,6 +2167,7 @@
         "label": "path_traversal",
         "family": "path",
         "variant": "dot-dot",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -627,6 +2188,7 @@
         "label": "path_traversal",
         "family": "path",
         "variant": "unix-passwd",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -647,6 +2209,7 @@
         "label": "path_traversal",
         "family": "path",
         "variant": "url-encoded",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -661,6 +2224,1659 @@
         "reasons": [
           "Unix password file; combined with 1 other traversal indicator(s)"
         ]
+      },
+      {
+        "case_id": "SQL06",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "comment-auth-bypass",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL07",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "or-1=1-comment-auth-bypass",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 45,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)"
+        ]
+      },
+      {
+        "case_id": "SQL08",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "json-body-auth-bypass",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 45,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)"
+        ]
+      },
+      {
+        "case_id": "SQL09",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "union-all-null-probe",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL10",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "union-information-schema",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection; corroborated by 3 SQLi indicators total"
+        ]
+      },
+      {
+        "case_id": "SQL11",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "error-based-extractvalue",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL12",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "error-based-convert-mssql",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL13",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "time-based-mysql-sleep",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 65,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-010"
+        ],
+        "reasons": [
+          "MySQL time-based blind (sleep)"
+        ]
+      },
+      {
+        "case_id": "SQL14",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "time-based-postgres-pg-sleep",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-010"
+        ],
+        "reasons": [
+          "MySQL time-based blind (sleep); corroborated by 3 SQLi indicators total"
+        ]
+      },
+      {
+        "case_id": "SQL15",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "time-based-mssql-waitfor",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 65,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-022"
+        ],
+        "reasons": [
+          "MSSQL time-based blind"
+        ]
+      },
+      {
+        "case_id": "SQL16",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "boolean-blind-subquery-count",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL17",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "boolean-blind-substring",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL18",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "url-encoded-tautology",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 45,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)"
+        ]
+      },
+      {
+        "case_id": "SQL19",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "mixed-case-union-select",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection"
+        ]
+      },
+      {
+        "case_id": "SQL20",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "comment-split-keywords",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL21",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "mysql-versioned-comment",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "SQL22",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "stacked-insert",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-004"
+        ],
+        "reasons": [
+          "INSERT statement"
+        ]
+      },
+      {
+        "case_id": "SQL23",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "stacked-update-post-body",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-005"
+        ],
+        "reasons": [
+          "UPDATE statement"
+        ]
+      },
+      {
+        "case_id": "SQL24",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "header-x-forwarded-for",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "header_validator",
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-007"
+        ],
+        "reasons": [
+          "OR tautology (e.g. OR 1=1)",
+          "OR tautology (e.g. OR 1=1) found in header 'X-Forwarded-For'"
+        ]
+      },
+      {
+        "case_id": "SQL25",
+        "label": "sql_injection",
+        "family": "sqli",
+        "variant": "cookie-union-select",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "sql_injection"
+        ],
+        "detectors": [
+          "cookie_validator",
+          "sqli_detector"
+        ],
+        "rules": [
+          "SQLI-001"
+        ],
+        "reasons": [
+          "UNION-based injection",
+          "UNION-based injection found in cookie 'TrackingId'"
+        ]
+      },
+      {
+        "case_id": "XSS06",
+        "label": "xss",
+        "family": "xss",
+        "variant": "mixed-case-script-tag",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS07",
+        "label": "xss",
+        "family": "xss",
+        "variant": "svg-onload",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 3 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS08",
+        "label": "xss",
+        "family": "xss",
+        "variant": "svg-animate-onbegin",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-007"
+        ],
+        "reasons": [
+          "JS dialog call (common PoC); corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS09",
+        "label": "xss",
+        "family": "xss",
+        "variant": "body-onload",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS10",
+        "label": "xss",
+        "family": "xss",
+        "variant": "anchor-javascript-uri",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-006"
+        ],
+        "reasons": [
+          "cookie theft attempt; corroborated by 3 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS11",
+        "label": "xss",
+        "family": "xss",
+        "variant": "numeric-entity-encoded-javascript-uri",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-002"
+        ],
+        "reasons": [
+          "javascript: URI scheme; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS12",
+        "label": "xss",
+        "family": "xss",
+        "variant": "url-encoded-img-onerror",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS13",
+        "label": "xss",
+        "family": "xss",
+        "variant": "double-url-encoded-svg-onload",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 3 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS14",
+        "label": "xss",
+        "family": "xss",
+        "variant": "attribute-breakout-onmouseover",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS15",
+        "label": "xss",
+        "family": "xss",
+        "variant": "autofocus-onfocus",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-007"
+        ],
+        "reasons": [
+          "JS dialog call (common PoC)"
+        ]
+      },
+      {
+        "case_id": "XSS16",
+        "label": "xss",
+        "family": "xss",
+        "variant": "details-ontoggle",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-007"
+        ],
+        "reasons": [
+          "JS dialog call (common PoC)"
+        ]
+      },
+      {
+        "case_id": "XSS17",
+        "label": "xss",
+        "family": "xss",
+        "variant": "nested-script-filter-bypass",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS18",
+        "label": "xss",
+        "family": "xss",
+        "variant": "malformed-unclosed-img-onerror",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS19",
+        "label": "xss",
+        "family": "xss",
+        "variant": "json-body-cookie-exfiltration",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 3 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS20",
+        "label": "xss",
+        "family": "xss",
+        "variant": "dom-document-write-cookie",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-006"
+        ],
+        "reasons": [
+          "cookie theft attempt"
+        ]
+      },
+      {
+        "case_id": "XSS21",
+        "label": "xss",
+        "family": "xss",
+        "variant": "dom-innerhtml-sink",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS22",
+        "label": "xss",
+        "family": "xss",
+        "variant": "header-x-forwarded-host",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS23",
+        "label": "xss",
+        "family": "xss",
+        "variant": "cookie-svg-onload",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "cookie_validator",
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-003"
+        ],
+        "reasons": [
+          "inline event handler; corroborated by 3 XSS indicators total",
+          "inline event handler found in cookie 'lang'"
+        ]
+      },
+      {
+        "case_id": "XSS24",
+        "label": "xss",
+        "family": "xss",
+        "variant": "hex-entity-encoded-script",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "xss"
+        ],
+        "detectors": [
+          "xss_detector"
+        ],
+        "rules": [
+          "XSS-001"
+        ],
+        "reasons": [
+          "inline script tag; corroborated by 2 XSS indicators total"
+        ]
+      },
+      {
+        "case_id": "XSS25",
+        "label": "xss",
+        "family": "xss",
+        "variant": "object-data-uri-base64",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "PATH04",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "backslash-windows-hosts",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-006"
+        ],
+        "reasons": [
+          "Windows system directory; combined with 2 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH05",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "nested-sequence-filter-bypass",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH06",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "absolute-etc-passwd",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file"
+        ]
+      },
+      {
+        "case_id": "PATH07",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "absolute-etc-shadow",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-008"
+        ],
+        "reasons": [
+          "Unix shadow password file"
+        ]
+      },
+      {
+        "case_id": "PATH08",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "absolute-windows-sam",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-006"
+        ],
+        "reasons": [
+          "Windows system directory"
+        ]
+      },
+      {
+        "case_id": "PATH09",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "absolute-boot-ini",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-005"
+        ],
+        "reasons": [
+          "Windows boot config"
+        ]
+      },
+      {
+        "case_id": "PATH10",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "proc-self-environ",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 70,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-007"
+        ],
+        "reasons": [
+          "Linux procfs introspection"
+        ]
+      },
+      {
+        "case_id": "PATH11",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "deep-multiple-sequences",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-001"
+        ],
+        "reasons": [
+          "directory traversal sequence; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH12",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "fully-url-encoded-dots-and-slashes",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 2 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH13",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "double-encoded-backslash-win-ini",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 80,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-001"
+        ],
+        "reasons": [
+          "directory traversal sequence; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH14",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "mixed-slash-backslash",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH15",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "utf8-overlong-slash",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "PATH16",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "null-byte-extension-bypass",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH17",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "request-path-traversal",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH18",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "request-path-encoded-traversal",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH19",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "post-body-template-traversal",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 70,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-001"
+        ],
+        "reasons": [
+          "directory traversal sequence"
+        ]
+      },
+      {
+        "case_id": "PATH20",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "json-body-backslash-traversal",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 70,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-001"
+        ],
+        "reasons": [
+          "directory traversal sequence"
+        ]
+      },
+      {
+        "case_id": "PATH21",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "cookie-traversal",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "cookie_validator",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)",
+          "Unix password file found in cookie 'lang'"
+        ]
+      },
+      {
+        "case_id": "PATH22",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "header-x-original-url",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file; combined with 1 other traversal indicator(s)"
+        ]
+      },
+      {
+        "case_id": "PATH23",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "absolute-var-log",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "PATH24",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "ssh-private-key",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 70,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-001"
+        ],
+        "reasons": [
+          "directory traversal sequence"
+        ]
+      },
+      {
+        "case_id": "PATH25",
+        "label": "path_traversal",
+        "family": "path",
+        "variant": "file-uri-scheme",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 90,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file"
+        ]
+      },
+      {
+        "case_id": "CMD05",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "semicolon-ls",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD06",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "single-pipe-whoami",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-007"
+        ],
+        "reasons": [
+          "identity enumeration"
+        ]
+      },
+      {
+        "case_id": "CMD07",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "or-operator-cat",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection",
+          "path_traversal"
+        ],
+        "detectors": [
+          "command_detector",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004",
+          "CMD-001"
+        ],
+        "reasons": [
+          "Unix password file",
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD08",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "and-operator-download-and-run",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD09",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "backtick-substitution",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD10",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "dollar-paren-curl-pipe-sh",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD11",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "netcat-reverse-shell",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD12",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "bash-dev-tcp-reverse-shell",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 75,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD13",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "ampersand-ping-oob",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "CMD14",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "semicolon-sleep-time-based",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 50,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-010"
+        ],
+        "reasons": [
+          "shell-level time delay"
+        ]
+      },
+      {
+        "case_id": "CMD15",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "encoded-newline-whoami",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 60,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-007"
+        ],
+        "reasons": [
+          "identity enumeration"
+        ]
+      },
+      {
+        "case_id": "CMD16",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "windows-ampersand-dir-net-user",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "CMD17",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "windows-cmd-exe",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 85,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector"
+        ],
+        "rules": [
+          "CMD-002"
+        ],
+        "reasons": [
+          "Windows command shell"
+        ]
+      },
+      {
+        "case_id": "CMD18",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "post-body-semicolon-cat-shadow",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection",
+          "path_traversal"
+        ],
+        "detectors": [
+          "command_detector",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-008",
+          "CMD-001"
+        ],
+        "reasons": [
+          "Unix shadow password file",
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD19",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "json-body-rm-rf",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
+      },
+      {
+        "case_id": "CMD20",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "url-encoded-semicolon-cat",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection",
+          "path_traversal"
+        ],
+        "detectors": [
+          "command_detector",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004",
+          "CMD-001"
+        ],
+        "reasons": [
+          "Unix password file",
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD21",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "ifs-whitespace-obfuscation",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection",
+          "path_traversal"
+        ],
+        "detectors": [
+          "command_detector",
+          "directory_detector"
+        ],
+        "rules": [
+          "PATH-004",
+          "CMD-001"
+        ],
+        "reasons": [
+          "Unix password file",
+          "shell metacharacter with command; metacharacter + command name both present"
+        ]
+      },
+      {
+        "case_id": "CMD22",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "header-shellshock-user-agent",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "path_traversal"
+        ],
+        "detectors": [
+          "directory_detector",
+          "header_validator"
+        ],
+        "rules": [
+          "PATH-004"
+        ],
+        "reasons": [
+          "Unix password file",
+          "Unix password file found in header 'User-Agent'"
+        ]
+      },
+      {
+        "case_id": "CMD23",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "header-x-forwarded-for-curl-pipe-sh",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector",
+          "header_validator"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present",
+          "shell metacharacter with command found in header 'X-Forwarded-For'"
+        ]
+      },
+      {
+        "case_id": "CMD24",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "cookie-backtick-curl",
+        "split": "heldout",
+        "action": "block",
+        "risk_score": 100,
+        "predicted_attacks": [
+          "command_injection"
+        ],
+        "detectors": [
+          "command_detector",
+          "cookie_validator"
+        ],
+        "rules": [
+          "CMD-001"
+        ],
+        "reasons": [
+          "shell metacharacter with command; metacharacter + command name both present",
+          "shell metacharacter with command found in cookie 'prefs'"
+        ]
+      },
+      {
+        "case_id": "CMD25",
+        "label": "command_injection",
+        "family": "command",
+        "variant": "interpreter-os-system",
+        "split": "heldout",
+        "action": "allow",
+        "risk_score": 0,
+        "predicted_attacks": [],
+        "detectors": [],
+        "rules": [],
+        "reasons": []
       }
     ],
     "evasion": [
@@ -669,6 +3885,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "url-encoded-once",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -689,6 +3906,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "url-encoded-twice",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -709,6 +3927,7 @@
         "label": "xss",
         "family": "xss",
         "variant": "html-entity",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -729,6 +3948,7 @@
         "label": "sql_injection",
         "family": "sqli",
         "variant": "url-encoded-union",
+        "split": "dev",
         "action": "block",
         "risk_score": 80,
         "predicted_attacks": [
@@ -749,6 +3969,7 @@
         "label": "path_traversal",
         "family": "path",
         "variant": "url-encoded-traversal",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -769,6 +3990,7 @@
         "label": "path_traversal",
         "family": "path",
         "variant": "double-encoded-traversal",
+        "split": "dev",
         "action": "block",
         "risk_score": 100,
         "predicted_attacks": [
@@ -783,274 +4005,6 @@
         "reasons": [
           "Unix password file; combined with 2 other traversal indicator(s)"
         ]
-      }
-    ]
-  },
-  "cross_framework": {
-    "n_cases": 29,
-    "matching_verdicts": 29,
-    "consistency_rate": 1.0,
-    "cases": [
-      {
-        "case_id": "B01",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B02",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B03",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B04",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B05",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B06",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B07",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B08",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B09",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B10",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B11",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "B12",
-        "expected_label": "benign",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "SQL01",
-        "expected_label": "sql_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "SQL02",
-        "expected_label": "sql_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "SQL03",
-        "expected_label": "sql_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "SQL04",
-        "expected_label": "sql_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "SQL05",
-        "expected_label": "sql_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "XSS01",
-        "expected_label": "xss",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "XSS02",
-        "expected_label": "xss",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "XSS03",
-        "expected_label": "xss",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "XSS04",
-        "expected_label": "xss",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "XSS05",
-        "expected_label": "xss",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "CMD01",
-        "expected_label": "command_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "CMD02",
-        "expected_label": "command_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "CMD03",
-        "expected_label": "command_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "CMD04",
-        "expected_label": "command_injection",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "PATH01",
-        "expected_label": "path_traversal",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "PATH02",
-        "expected_label": "path_traversal",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
-      },
-      {
-        "case_id": "PATH03",
-        "expected_label": "path_traversal",
-        "django_status": 403,
-        "flask_status": 403,
-        "django_blocked": true,
-        "flask_blocked": true,
-        "same_verdict": true
       }
     ]
   }

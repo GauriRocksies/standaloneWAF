@@ -1,0 +1,73 @@
+WAF EVALUATION REPORT
+================================================================================
+
+V-A. Detection Performance
+--------------------------------------------------------------------------------
+Evaluation corpus: 200 requests (100 malicious, 100 benign).
+
+Class                    TP   FP   FN   Precision      Recall          F1
+command_injection        20    8    5      71.43%      80.00%      75.47%
+path_traversal           23    7    2      76.67%      92.00%      83.64%
+sql_injection            16    8    9      66.67%      64.00%      65.31%
+xss                      24    2    1      92.31%      96.00%      94.12%
+
+Macro-average: precision=76.77%, recall=83.00%, F1=79.63%.
+
+V-A2. Final WAF Decision (block/allow) - separate from detector alerts above
+--------------------------------------------------------------------------------
+The table above counts a detector alert as a detection. This section counts only requests the WAF actually BLOCKED (risk score >= threshold or a critical finding).
+Overall (200 requests): TP=68 FP=7 TN=93 FN=32; accuracy=80.50%, precision=90.67%, recall=68.00%, F1=77.71%, FPR=7.00%.
+
+Category                  N   Alerted   Blocked   Alert rate   Block rate
+command_injection        25        20        17       80.00%       68.00%
+path_traversal           25        23        23       92.00%       92.00%
+sql_injection            25        16         7       64.00%       28.00%
+xss                      25        24        21       96.00%       84.00%
+
+Split         N   TP   FP   TN   FN       Acc      Prec    Recall        F1       FPR
+dev          29   13    0   12    4    86.21%   100.00%    76.47%    86.67%     0.00%
+heldout     171   55    7   81   28    79.53%    88.71%    66.27%    75.86%     7.95%
+('dev' = original 29 cases; 'heldout' = extended corpus, not used for rule tuning.)
+
+V-B. False-Positive Analysis
+--------------------------------------------------------------------------------
+Benign requests incorrectly blocked: 7/100 (7.00%).
+Blocked benign case IDs: B33, B36, B37, B41, B44, B50, B56
+
+Detector                         False alarms        Rate
+command_detector                            8       8.00%
+cookie_validator                            1       1.00%
+directory_detector                          1       1.00%
+sqli_detector                               8       8.00%
+user_agent_detector                         2       2.00%
+xss_detector                                2       2.00%
+
+V-C. Evasion Resistance
+--------------------------------------------------------------------------------
+Encoded/obfuscated cases caught with the expected class: 6/6 (100.00%).
+
+Case    Family    Variant                         Caught    Action
+EV01    xss       url-encoded-once                  True     block
+EV02    xss       url-encoded-twice                 True     block
+EV03    xss       html-entity                       True     block
+EV04    sqli      url-encoded-union                 True     block
+EV05    path      url-encoded-traversal             True     block
+EV06    path      double-encoded-traversal          True     block
+
+V-D. Latency Overhead
+--------------------------------------------------------------------------------
+Not run. Supply --live, --proxy-url, and --origin-url.
+
+V-E. Cross-Framework Portability
+--------------------------------------------------------------------------------
+Not run. Supply --cross-framework with both proxy URLs to exercise Django and Flask origins.
+
+PAPER-READY PARAGRAPHS
+================================================================================
+
+Detection Performance: The evaluation corpus contained 200 labeled requests, including 100 malicious and 100 benign requests. Across the evaluated attack classes, the macro-averaged precision was 76.77%, recall was 83.00%, and F1-score was 79.63%.
+Final-Decision Performance: Counting only requests the WAF actually blocked, the WAF achieved accuracy 80.50%, precision 90.67%, recall 68.00%, F1-score 77.71% and a false-positive rate of 7.00% (TP=68, FP=7, TN=93, FN=32). Detector-level alerts (above) are higher than blocks because some alerts score below the blocking threshold.
+False-Positive Analysis: The WAF incorrectly blocked 7 of 100 benign requests, giving an aggregate false-positive rate of 7.00%.
+Evasion Resistance: The encoded/obfuscated test set contained 6 cases, of which 6 were detected with the expected attack class, corresponding to a detection rate of 100.00%.
+
+Do not change the Results sections to claim measurements that the script did not actually run. Human beings invented papers; apparently we also invented the ancient ritual of typing [to be inserted] and hoping for the best.

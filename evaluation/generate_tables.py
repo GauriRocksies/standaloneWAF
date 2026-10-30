@@ -27,6 +27,29 @@ def format_sheet(ws):
         ws.column_dimensions[column_letter].width = min(max_length + 3, 40)
 
 
+def _add_decision_sheet(workbook, data):
+    """Final block/allow metrics (separate from detector-level alerts)."""
+    dl = data.get("decision_level")
+    if not dl:
+        return
+    ws = workbook.create_sheet("Decision Level")
+    ws.append(["Split", "N", "TP", "FP", "TN", "FN",
+               "Accuracy", "Precision", "Recall", "F1", "FPR"])
+    rows = [("all", dl["overall"])] + list(dl["by_split"].items())
+    for name, m in rows:
+        ws.append([name, m["n"], m["tp"], m["fp"], m["tn"], m["fn"],
+                   m["accuracy"], m["precision"], m["recall"], m["f1"],
+                   m["false_positive_rate"]])
+    ws.append([])
+    ws.append(["Attack Class", "N", "Alerted", "Blocked",
+               "Alert Rate", "Block Rate", "Not Blocked (case IDs)"])
+    for r in dl["per_category"]:
+        ws.append([r["attack_class"], r["n"], r["detected"], r["blocked"],
+                   r["detection_rate"], r["block_rate"],
+                   ", ".join(r["missed_case_ids"])])
+    format_sheet(ws)
+
+
 def main():
 
     # Load JSON
@@ -154,6 +177,13 @@ def main():
     # TABLE 4 - Cross Framework
     # =========================================================
 
+    if "cross_framework" not in data:
+        _add_decision_sheet(workbook, data)
+        workbook.save(OUTPUT_FILE)
+        print(f"Tables generated successfully: {OUTPUT_FILE} "
+              "(no cross_framework data in results; sheet skipped)")
+        return
+
     ws = workbook.create_sheet("Cross Framework")
 
     ws.append([
@@ -198,6 +228,7 @@ def main():
     # SAVE
     # =========================================================
 
+    _add_decision_sheet(workbook, data)
     workbook.save(OUTPUT_FILE)
 
     print(f"Tables generated successfully: {OUTPUT_FILE}")
